@@ -8,6 +8,7 @@ const {
   Relationship,
   Integer,
 } = require("@keystonejs/fields");
+const { Color } = require("@keystonejs/fields-color");
 const { Markdown } = require("@keystonejs/fields-markdown");
 const { GraphQLApp } = require("@keystonejs/app-graphql");
 const { AdminUIApp } = require("@keystonejs/app-admin-ui");
@@ -18,7 +19,7 @@ const { battlefieldRoles, factions } = require("./constants");
 const { KnexAdapter: Adapter } = require("@keystonejs/adapter-knex");
 const PROJECT_NAME = "40k-app";
 
-process.env.CONNECT_TO = "postgres://localhost/40k_app";
+process.env.CONNECT_TO = "postgres://localhost/40k-app";
 
 const keystone = new Keystone({
   adapter: new Adapter(),
@@ -85,6 +86,9 @@ keystone.createList("Army", {
     faction: { type: Select, options: factions, dataType: "string" },
     units: { type: Relationship, ref: "Unit.army", many: true },
     owner: { type: Relationship, ref: "User.armies" },
+    primaryColor: { type: Color },
+    secondaryColor: { type: Color },
+    highlightColor: { type: Color },
   },
 });
 
@@ -109,6 +113,32 @@ keystone.createList("Battle", {
     mission: { type: Text },
     army1Score: { type: Integer },
     army2Score: { type: Integer },
+    army1Secondary1: { type: Text },
+    army1Secondary2: { type: Text },
+    army1Secondary3: { type: Text },
+    army2Secondary1: { type: Text },
+    army2Secondary2: { type: Text },
+    army2Secondary3: { type: Text },
+    winner: { type: Relationship, ref: "Army" },
+  },
+});
+
+keystone.createList("Planet", {
+  fields: {
+    name: { type: Text },
+    battlefields: {
+      type: Relationship,
+      ref: "Battlefield",
+      many: true,
+    },
+  },
+});
+
+keystone.createList("Battlefield", {
+  fields: {
+    gridReference: { type: Text },
+    controller: { type: Relationship, ref: "Army" },
+    battles: { type: Relationship, ref: "Battle", many: true },
   },
 });
 
