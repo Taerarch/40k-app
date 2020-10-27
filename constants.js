@@ -21,17 +21,29 @@ const factions = [
 ];
 
 const missions = {
-  grandTournament: { combatPatrol: [], incursion: [], strikeForce: [], onslaught: []},
-  eternalWar: { combatPatrol: [], incursion: [], strikeForce: [{
-    name: "The Four Pillars"
-    briefing: "blah blah",
-    rules: "More blah blah",
-    primary: {
-      name: "Take and Hold",
-      rules: "So much text"
-    },
-    secondaries: []
-  }], onslaught: []}
-}
+  grandTournament: {
+    combatPatrol: [],
+    incursion: [],
+    strikeForce: [],
+    onslaught: [],
+  },
+  eternalWar: {
+    combatPatrol: [],
+    incursion: [],
+    strikeForce: [
+      {
+        name: "The Four Pillars",
+        briefing: "blah blah",
+        rules: "More blah blah",
+        primary: {
+          name: "Take and Hold",
+          rules: "So much text",
+        },
+        secondaries: [],
+      },
+    ],
+    onslaught: [],
+  },
+};
 
 module.exports = { battlefieldRoles, factions, missions };

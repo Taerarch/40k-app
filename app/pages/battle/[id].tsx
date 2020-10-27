@@ -88,7 +88,7 @@ const MAKE_BATTLE_ACTIVE = gql`
 `;
 const SpectatorMode = ({ status, armyBattleInfo1, armyBattleInfo2 }) => {
   if (status === "planning") {
-    return "waiting for game to commence";
+    return <div>"waiting for game to commence"</div>;
   } else if (status === "inProgress") {
     return (
       <>
@@ -97,9 +97,9 @@ const SpectatorMode = ({ status, armyBattleInfo1, armyBattleInfo2 }) => {
       </>
     );
   } else if (status === "completed") {
-    return "completed scene";
+    return <div>"completed scene"</div>;
   } else {
-    return "problems";
+    return <div>"problems"</div>;
   }
 };
 
@@ -215,9 +215,9 @@ const PlayerView = ({ myBattleInfo, theirBattleInfo, status, refetch, id }) => {
       </>
     );
   } else if (status === "completed") {
-    return "completed scene";
+    return <div>"completed scene"</div>;
   } else {
-    return "problems";
+    return <div>"problems"</div>;
   }
 };
 
