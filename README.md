@@ -44,3 +44,38 @@ Army
 - description
 - (units)
 - (points values)
+
+## What works, what's in progress, what would be nice
+
+- create and manage battle flow is in progress
+- would be nice to have the mission rules fleshed out in a schema, and make selection use them
+  - same with the actual factual secondaries data
+- need to work on adding images to battles for batrep stuff
+- all the css and UI improvements - have a bit of a poke on mobile
+- need to sort out deploying
+- I'd love to add ts-gql into the project properly
+- Need to work on the battle index page
+- look at the label fields for things to make better labels - in particular for `battle`, maybe for `army`
+  - do we need another bit of data for armies such as date? Would allow label to be `a vs b (DD/MM/YY)`
+- review of how the data is modeled now it's been in use. A lot of cumbersome names secondary1Score
+  - shorten names? `sec1`/`sec1Num` kind of thing? Different format? `secondary: { name, score }`
+    - the second really appeals but not sure how to do it within a keystone schema nicely
+- you cannot end a buttle currently - fix that
+- you cannot update point scores - fix that
+- get phase 1 deployed without data polling, but prioritise it for phase 2
+- no real plans to link units and models to armies right now - would be neat to be able to link a battlescribe file or something though
+- add pregame notes as an interrim solution to things being kept in reserves
+
+```js
+const Battle = {
+    army1: {
+        primaryScore: 2,
+        secondaries: [{
+            name, score
+        }]
+    }
+    army2: {
+        ...
+    }
+}
+```
