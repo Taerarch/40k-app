@@ -24,6 +24,7 @@ process.env.CONNECT_TO = "postgres://localhost/40k-app";
 const keystone = new Keystone({
   adapter: new Adapter(),
   onConnect: initialiseData,
+  cookieSecret: "this-is-a-bad-secret",
 });
 
 // Access control functions
@@ -112,6 +113,7 @@ keystone.createList("Battle", {
     points: { type: Integer },
     // mission: { type: Relationship, ref: "Mission" },
     mission: { type: Text },
+    // primary: { type: Text },
     setupDescription: { type: Markdown },
     description: { type: Markdown },
     status: {

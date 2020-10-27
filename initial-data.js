@@ -4,7 +4,7 @@ const initialData = {
   User: [
     {
       name: "Noviny",
-      email: "novinyarts@gmail.com",
+      email: "novinyarts@warhammer-stuff.com",
       isAdmin: true,
       password: "password",
       armies: {
@@ -18,8 +18,8 @@ const initialData = {
       },
     },
     {
-      name: "Marky-Mark",
-      email: "markus@gmail.com",
+      name: "Mark",
+      email: "mark@warhammer-stuff.com",
       isAdmin: true,
       password: "password",
       armies: {
@@ -29,6 +29,58 @@ const initialData = {
           faction: "Orks",
           primaryColor: "rgba(246, 0, 0, 1)",
           secondaryColor: "rgba(82, 133, 56, 1)",
+        },
+      },
+    },
+    {
+      name: "Tom",
+      email: "tom@warhammer-stuff.com",
+      isAdmin: true,
+      password: "password",
+      armies: {
+        create: {
+          name: `DOOM`,
+          description: "An army of passion",
+          faction: "Death Guard",
+        },
+      },
+    },
+    {
+      name: "Sam",
+      email: "sam@warhammer-stuff.com",
+      isAdmin: true,
+      password: "password",
+      armies: {
+        create: {
+          name: `Knights`,
+          description: "An army of passion",
+          faction: "Grey Knights",
+        },
+      },
+    },
+    {
+      name: "Matt",
+      email: "matt@warhammer-stuff.com",
+      isAdmin: true,
+      password: "password",
+      armies: {
+        create: {
+          name: `Not traitors`,
+          description: "An army of passion",
+          faction: "Dark Angels",
+        },
+      },
+    },
+    {
+      name: "Peter",
+      email: "peter@warhammer-stuff.com",
+      isAdmin: true,
+      password: "password",
+      armies: {
+        create: {
+          name: `Dreams of future`,
+          description: "An army of passion",
+          faction: "Custodes",
         },
       },
     },
