@@ -1,66 +1,53 @@
-const crypto = require("crypto");
-const randomString = () => crypto.randomBytes(6).hexSlice();
+const { createItems } = require("@keystonejs/server-side-graphql-client");
 
-module.exports = async (keystone) => {
-  // Count existing users
-  const {
-    data: {
-      _allUsersMeta: { count },
+const initialData = {
+  User: [
+    {
+      name: "Noviny",
+      email: "novinyarts@gmail.com",
+      isAdmin: true,
+      password: "password",
+      armies: {
+        create: {
+          name: `Nova'eir`,
+          description: "My main army",
+          faction: "T'au",
+          primaryColor: "rgba(119, 65, 191, 1)",
+          secondaryColor: "rgba(232, 235, 40, 1)",
+        },
+      },
     },
-  } = await keystone.executeGraphQL({
-    context: keystone.createContext({ skipAccessControl: true }),
-    query: `query {
-      _allUsersMeta {
-        count
-      }
-    }`,
-  });
-
-  if (count === 0 || count === null) {
-    // const password = randomString();
-    const password = "password";
-    const email = "novinyarts@gmail.com";
-
-    let graphqlResult = await keystone.executeGraphQL({
-      context: keystone.createContext({ skipAccessControl: true }),
-      query: `mutation {
-        createUsers(
-          data: [
-            {
-              data: {
-                name: "Noviny"
-                email: "novinyarts@gmail.com"
-                isAdmin: true
-                password: "password"
-                armies: { create: { name: "Nova'eir", faction: "T'au" } }
-              }
-            }
-            {
-              data: {
-                name: "Marky-Mark"
-                email: "markus@gmail.com"
-                isAdmin: false
-                password: "password"
-                armies: { create: { name: "Harleys", faction: "Harlequins" } }
-              }
-            }
-          ]
-        ) {
-          id
-          name
-        }
-      }`,
-      // variables: { password, email },
-    });
-
-    console.log(graphqlResult);
-
-    console.log(`
-
-User created:
-  email: ${email}
-  password: ${password}
-Please change these details after initial login.
-`);
-  }
+    {
+      name: "Marky-Mark",
+      email: "markus@gmail.com",
+      isAdmin: true,
+      password: "password",
+      armies: {
+        create: {
+          name: `Some Orks probably`,
+          description: "An army of passion",
+          faction: "Orks",
+          primaryColor: "rgba(246, 0, 0, 1)",
+          secondaryColor: "rgba(82, 133, 56, 1)",
+        },
+      },
+    },
+  ],
 };
+
+async function createInitialData(keystone) {
+  if (!process.env.RECREATE_DATABASE) return;
+  let newItems = Object.entries(initialData);
+
+  await Promise.all(
+    newItems.map(([listKey, listData]) =>
+      createItems({
+        keystone,
+        listKey,
+        items: listData.map((x) => ({ data: x })),
+      })
+    )
+  );
+}
+
+module.exports = createInitialData;

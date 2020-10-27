@@ -52,3 +52,49 @@ const getXP = () => {
 };
 
 getXP();
+
+const mealPlan = [
+  { day: "all", snacks: ["apple"], drinks: "" },
+  {
+    day: "Monday",
+    breakfast: "N/A",
+    lunch: "lasagna",
+    dinner: "",
+  },
+  {
+    day: "Tuesday",
+    breakfast: "porridge",
+    lunch: "lasagna",
+    dinner: "burrito bowl",
+  },
+  {
+    day: "Wednesday",
+    breakfast: "porridge",
+    lunch: "lasagna",
+    dinner: "pasta",
+  },
+  {
+    day: "Thursday",
+    breakfast: "porridge",
+    lunch: "",
+    dinner: "pasta",
+  },
+  {
+    day: "Friday",
+    breakfast: "porridge",
+    lunch: "zeus street greek",
+    dinner: "",
+  },
+  {
+    day: "Saturday",
+    breakfast: "",
+    lunch: "",
+    dinner: "",
+  },
+  {
+    day: "Sunday",
+    breakfast: "",
+    lunch: "",
+    dinner: "",
+  },
+];

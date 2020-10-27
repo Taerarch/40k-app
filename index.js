@@ -23,7 +23,7 @@ process.env.CONNECT_TO = "postgres://localhost/40k-app";
 
 const keystone = new Keystone({
   adapter: new Adapter(),
-  onConnect: process.env.CREATE_TABLES !== "true" && initialiseData,
+  onConnect: initialiseData,
 });
 
 // Access control functions
@@ -107,21 +107,46 @@ keystone.createList("Unit", {
 
 keystone.createList("Battle", {
   fields: {
-    army1: { type: Relationship, ref: "Army" },
-    army2: { type: Relationship, ref: "Army" },
+    armyBattleInfo1: { type: Relationship, ref: "ArmyBattleInfo" },
+    armyBattleInfo2: { type: Relationship, ref: "ArmyBattleInfo" },
     points: { type: Integer },
+    // mission: { type: Relationship, ref: "Mission" },
     mission: { type: Text },
-    army1Score: { type: Integer },
-    army2Score: { type: Integer },
-    army1Secondary1: { type: Text },
-    army1Secondary2: { type: Text },
-    army1Secondary3: { type: Text },
-    army2Secondary1: { type: Text },
-    army2Secondary2: { type: Text },
-    army2Secondary3: { type: Text },
-    winner: { type: Relationship, ref: "Army" },
+    setupDescription: { type: Markdown },
+    description: { type: Markdown },
+    status: {
+      type: Select,
+      options: [
+        { value: "planning", label: "planning" },
+        { value: "inProgress", label: "in progress" },
+        { value: "completed", label: "completed" },
+      ],
+    },
   },
 });
+
+keystone.createList("ArmyBattleInfo", {
+  fields: {
+    army: { type: Relationship, ref: "Army" },
+    primaryScore: { type: Integer },
+    secondary1Score: { type: Integer },
+    secondary2Score: { type: Integer },
+    secondary3Score: { type: Integer },
+    secondary1: { type: Text },
+    secondary2: { type: Text },
+    secondary3: { type: Text },
+  },
+});
+
+// keystone.createList("Mission", {
+//   name: { type: Text },
+//   forceSize: {
+//     type: Select,
+//     options: ["Combat Patrol", "Incursion", "Strike Force", "Onslaught"],
+//   },
+//   battleLayout: { type: Image },
+//   description: { type: Markdown },
+// });
 
 keystone.createList("Planet", {
   fields: {

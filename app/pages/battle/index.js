@@ -1,7 +1,6 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import { useState, useEffect } from "react";
-import { KeystoneProvider } from "@keystonejs/apollo-helpers";
 
 const GET_ALL_ARMIES = `
 query getAllArmies {
