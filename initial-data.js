@@ -1,10 +1,11 @@
 const { createItems } = require("@keystonejs/server-side-graphql-client");
+const fs = require("fs");
 
 const initialData = {
   User: [
     {
       name: "Noviny",
-      email: "novinyarts@warhammer-stuff.com",
+      email: "noviny@warhammer-stuff.com",
       isAdmin: true,
       password: "password",
       armies: {
@@ -89,6 +90,9 @@ const initialData = {
 
 async function createInitialData(keystone) {
   if (!process.env.RECREATE_DATABASE) return;
+  let schema = keystone.dumpSchema();
+  fs.writeFileSync("./schema.graphql", schema);
+
   let newItems = Object.entries(initialData);
 
   await Promise.all(

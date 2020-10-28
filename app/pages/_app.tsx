@@ -1,9 +1,4 @@
-import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
-  HttpLink,
-} from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
 import { useApollo } from "../lib/apolloClient";
 
 import LoginControl from "../components/LoginControl";

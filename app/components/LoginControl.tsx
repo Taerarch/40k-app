@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@ts-gql/apollo";
+import { gql } from "@ts-gql/tag";
 
 const AUTH_USER = gql`
   mutation signin($email: String, $password: String) {
@@ -9,35 +10,39 @@ const AUTH_USER = gql`
       password: $password
     ) {
       item {
+        id
         name
       }
     }
   }
-`;
+` as import("../../__generated__/ts-gql/signin").type;
 
 export const AUTHED_USER = gql`
-  query getAuthedUser {
+  query getAuthedUser1 {
     authenticatedUser {
       id
       name
     }
   }
-`;
+` as import("../../__generated__/ts-gql/getAuthedUser1").type;
 
 const LOG_OUT = gql`
-  mutation {
+  mutation unauthUser {
     unauthenticateUser {
       success
     }
   }
-`;
+` as import("../../__generated__/ts-gql/unauthUser").type;
 
 const Login = () => {
   let emailInput, passwordInput;
-  const { data: { authenticatedUser } = {}, refetch, loading } = useQuery(
-    AUTHED_USER
-  );
-  const [authUser] = useMutation(AUTH_USER, {
+  const {
+    data: { authenticatedUser } = {},
+    refetch,
+    loading,
+    error,
+  } = useQuery(AUTHED_USER);
+  const [authUser, { data }] = useMutation(AUTH_USER, {
     onCompleted: () => refetch(),
   });
   const [logOut] = useMutation(LOG_OUT, {

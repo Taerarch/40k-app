@@ -1,4 +1,4 @@
-const battlefieldRoles = [
+module.exports.battlefieldRoles = [
   "HQ",
   "Troops",
   "Elites",
@@ -8,9 +8,7 @@ const battlefieldRoles = [
   "Lord of War",
 ];
 
-// const missions = ["Combat Patrol", "Incursion", "Strike Force", "Onslaught"];
-
-const factions = [
+module.exports.factions = [
   "T'au",
   "Grey Knights",
   "Harlequins",
@@ -20,7 +18,26 @@ const factions = [
   "Custodes",
 ];
 
-const missions = {
+module.exports.objectToOptions = (obj) =>
+  Object.entries(obj).map(([value, label]) => ({
+    value,
+    label,
+  }));
+
+module.exports.missionTypes = {
+  combatPatrol: "Combat Patrol",
+  incursion: "Incursion",
+  strikeForce: "Strike Force",
+  onslaught: "Onslaught",
+};
+
+module.exports.battleStatuses = {
+  planning: "Planning",
+  inProgress: "In Progress",
+  completed: "Completed",
+};
+
+module.exports.missions = {
   grandTournament: {
     combatPatrol: [],
     incursion: [],
@@ -45,5 +62,3 @@ const missions = {
     onslaught: [],
   },
 };
-
-module.exports = { battlefieldRoles, factions, missions };

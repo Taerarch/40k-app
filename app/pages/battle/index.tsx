@@ -1,6 +1,8 @@
 /** @jsx jsx */
-import { gql, useQuery } from "@apollo/client";
+
 import { jsx } from "@emotion/core";
+import { useQuery } from "@ts-gql/apollo";
+import { gql } from "@ts-gql/tag";
 import Link from "next/link";
 
 const GET_BATTLES = gql`
@@ -8,27 +10,33 @@ const GET_BATTLES = gql`
     allBattles {
       id
       status
-      armyBattleInfo1 {
+      army1 {
+        id
         army {
+          id
           faction
           name
           owner {
+            id
             name
           }
         }
       }
-      armyBattleInfo2 {
+      army2 {
+        id
         army {
+          id
           faction
           name
           owner {
+            id
             name
           }
         }
       }
     }
   }
-`;
+` as import("../../../__generated__/ts-gql/getAllBattles").type;
 
 const BattleList = () => {
   const { data } = useQuery(GET_BATTLES);
@@ -42,24 +50,22 @@ const BattleList = () => {
   return (
     <div>
       <ul>
-        {sortedBattles.map(
-          ({ armyBattleInfo1, armyBattleInfo2, id, status }) => (
-            <li key={id}>
-              <Link
-                href={{
-                  pathname: "/battle/[id]",
-                  query: { id },
-                }}
-              >
-                <a>
-                  {armyBattleInfo1?.army?.owner?.name || "???"} v{" "}
-                  {armyBattleInfo2?.army?.owner?.name || "???"}
-                </a>
-              </Link>{" "}
-              - ({status})
-            </li>
-          )
-        )}
+        {sortedBattles.map(({ army1, army2, id, status }) => (
+          <li key={id}>
+            <Link
+              href={{
+                pathname: "/battle/[id]",
+                query: { id },
+              }}
+            >
+              <a>
+                {army1?.army?.owner?.name || "???"} v{" "}
+                {army2?.army?.owner?.name || "???"}
+              </a>
+            </Link>{" "}
+            - ({status})
+          </li>
+        ))}
       </ul>
     </div>
   );

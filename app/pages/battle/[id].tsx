@@ -1,6 +1,8 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@ts-gql/apollo";
+import { gql } from "@ts-gql/tag";
+
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -34,16 +36,20 @@ const GET_BATTLE = gql`
     Battle(where: { id: $id }) {
       status
       id
-      armyBattleInfo1 {
+      army1 {
         id
-        secondary1
-        secondary2
-        secondary3
-        secondary1Score
-        secondary2Score
-        secondary3Score
-        primaryScore
+        primary {
+          id
+          name
+          score
+        }
+        secondaries {
+          id
+          name
+          score
+        }
         army {
+          id
           name
           faction
           owner {
@@ -52,16 +58,20 @@ const GET_BATTLE = gql`
           }
         }
       }
-      armyBattleInfo2 {
+      army2 {
         id
-        secondary1
-        secondary2
-        secondary3
-        secondary1Score
-        secondary2Score
-        secondary3Score
-        primaryScore
+        primary {
+          id
+          name
+          score
+        }
+        secondaries {
+          id
+          name
+          score
+        }
         army {
+          id
           name
           faction
           owner {
@@ -72,7 +82,7 @@ const GET_BATTLE = gql`
       }
     }
   }
-`;
+` as import("../../../__generated__/ts-gql/getBattle").type;
 
 const AUTHED_USER = gql`
   query getAuthedUser {
@@ -80,7 +90,7 @@ const AUTHED_USER = gql`
       id
     }
   }
-`;
+` as import("../../../__generated__/ts-gql/getAuthedUser").type;
 const UPDATE_SECONDARIES = gql`
   mutation udpateSecondaries(
     $id: ID!
@@ -88,19 +98,9 @@ const UPDATE_SECONDARIES = gql`
     $secondary2: String!
     $secondary3: String!
   ) {
-    updateArmyBattleInfo(
-      id: $id
-      data: {
-        secondary1: $secondary1
-        secondary2: $secondary2
-        secondary3: $secondary3
-      }
-    ) {
-      id
-      secondary1
-      secondary2
-      secondary3
-    }
+    # updateObjectives {
+      
+    # }
   }
 `;
 

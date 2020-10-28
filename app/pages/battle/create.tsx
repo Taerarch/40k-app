@@ -1,6 +1,7 @@
 /** @jsx jsx */
-import { gql, useMutation, useQuery } from "@apollo/client";
 import { jsx } from "@emotion/core";
+import { useMutation, useQuery } from "@ts-gql/apollo";
+import { gql } from "@ts-gql/tag";
 import { useState } from "react";
 import Select from "react-select";
 import { useRouter } from "next/router";
@@ -12,11 +13,12 @@ const GET_ARMIES = gql`
       name
       faction
       owner {
+        id
         name
       }
     }
   }
-`;
+` as import("../../../__generated__/ts-gql/getArmies").type;
 
 const CREATE_BATTLE = gql`
   mutation createABattle(
@@ -32,33 +34,41 @@ const CREATE_BATTLE = gql`
         description: $description
         mission: $mission
         status: planning
-        armyBattleInfo1: {
+        army1: {
           create: {
             army: { connect: { id: $army1ID } }
-            primaryScore: 0
-            secondary1Score: 0
-            secondary2Score: 0
-            secondary3Score: 0
+            primary: { create: { name: "Primary", score: 0 } }
+            secondaries: {
+              create: [
+                { name: "", score: 0 }
+                { name: "", score: 0 }
+                { name: "", score: 0 }
+              ]
+            }
           }
         }
-        armyBattleInfo2: {
+        army2: {
           create: {
-            army: { connect: { id: $army2ID } }
-            primaryScore: 0
-            secondary1Score: 0
-            secondary2Score: 0
-            secondary3Score: 0
+            army: { connect: { id: $army1ID } }
+            primary: { create: { name: "Primary", score: 0 } }
+            secondaries: {
+              create: [
+                { name: "", score: 0 }
+                { name: "", score: 0 }
+                { name: "", score: 0 }
+              ]
+            }
           }
         }
       }
     ) {
       id
-      armyBattleInfo1 {
+      army1 {
         army {
           name
         }
       }
-      armyBattleInfo2 {
+      army2 {
         army {
           name
         }
