@@ -1,2 +1,4 @@
 const { withTsGql } = require("@ts-gql/next");
-module.exports = withTsGql({});
+const withPreconstruct = require("@preconstruct/next");
+
+module.exports = withTsGql(withPreconstruct());

@@ -6,9 +6,12 @@ import { gql, FragmentData } from "@ts-gql/tag";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
+import { palette } from "../../../palette";
+
 const fragment = gql`
   fragment Army_info on BattleInfo {
     id
+    CP
     primary {
       id
       name
@@ -30,6 +33,15 @@ const fragment = gql`
     }
   }
 ` as import("../../../__generated__/ts-gql/Army_info").type;
+
+const UPDATE_OBJECTIVE = gql`
+  mutation updateObjective($id: ID!, $score: Int!) {
+    updateObjective(id: $id, data: { score: $score }) {
+      id
+      score
+    }
+  }
+` as import("../../../__generated__/ts-gql/updateObjective").type;
 
 const GET_BATTLE = gql`
   query getBattle($id: ID!) {
@@ -70,6 +82,7 @@ const UPDATE_SECONDARIES = gql`
       ]
     ) {
       id
+      name
     }
   }
 ` as import("../../../__generated__/ts-gql/udpateSecondaries").type;
@@ -100,14 +113,23 @@ const SpectatorMode = ({ status, army1, army2 }) => {
 };
 
 const Imp = ({ name, score, isInteractable, onChange }) => (
-  <li key={name}>
-    {name}:{" "}
-    {isInteractable ? <input value={score} onChange={onChange} /> : score}
+  <li key={name} css={{ display: "flex", justifyContent: "space-between" }}>
+    <span>{name}:</span>
+    <span>
+      {isInteractable ? (
+        <input value={score} onChange={onChange} css={{ width: 20 }} />
+      ) : (
+        score
+      )}
+    </span>
   </li>
 );
 
-type BoardProps = Readonly<FragmentData<typeof fragment>> & {
+type BattleInfo = Readonly<FragmentData<typeof fragment>>;
+
+type BoardProps = BattleInfo & {
   isInteractable?: boolean;
+  CP: number;
 };
 
 const Board = ({
@@ -115,23 +137,41 @@ const Board = ({
   secondaries,
   isInteractable = false,
   army,
+  CP,
 }: BoardProps) => {
+  const [updateObjective] = useMutation(UPDATE_OBJECTIVE);
+
   return (
     <div>
       <h2>{army.owner.name}</h2>
-      <ul>
-        <Imp {...primary} onChange={() => {}} isInteractable={isInteractable} />
+      <ul css={{ padding: 0 }}>
+        <Imp
+          {...primary}
+          onChange={({ target }) =>
+            updateObjective({
+              variables: { id: primary.id, score: target.value },
+            })
+          }
+          isInteractable={isInteractable}
+        />
         {secondaries.map((secondary) => (
           <Imp
             {...secondary}
             key={secondary.name}
-            onChange={() => {}}
+            onChange={({ target }) =>
+              updateObjective({
+                variables: { id: secondary.id, score: target.value },
+              })
+            }
             isInteractable={isInteractable}
           />
         ))}
-        <li>
-          CP: <input value={0} onChange={() => {}} />
-        </li>
+        <Imp
+          isInteractable={isInteractable}
+          name="CP"
+          score={CP}
+          onChange={() => {}}
+        />
       </ul>
       Current total score:{" "}
       {primary.score +
@@ -153,7 +193,28 @@ type PlayerViewProps = typeof GET_BATTLE.___type.result.Battle & {
   userId: String;
 };
 
-const PlayerView = ({ army1, army2, status, userId }: PlayerViewProps) => {
+const Button = (props) => (
+  <button
+    {...props}
+    css={{
+      padding: 8,
+      border: 0,
+      borderRadius: 15,
+      backgroundColor: palette.green100,
+      ":hover": {
+        backgroundColor: palette.green200,
+      },
+      ":active": {
+        backgroundColor: palette.green300,
+      },
+      ":disabled": {
+        backgroundColor: palette.neutral300,
+      },
+    }}
+  />
+);
+
+const PlayerView = ({ army1, army2, status, userId, id }: PlayerViewProps) => {
   const myArmy = army1.army.owner.id === userId ? army1 : army2;
   const theirArmy = army1.army.owner.id !== userId ? army1 : army2;
   const [secondaries, setSecondaries] = useState(myArmy.secondaries);
@@ -162,9 +223,10 @@ const PlayerView = ({ army1, army2, status, userId }: PlayerViewProps) => {
   const [activateBattle] = useMutation(MAKE_BATTLE_ACTIVE);
 
   if (status === "planning") {
-    const cantMoveFromBattle =
+    const cantMoveFromBattle = !!(
       myArmy.secondaries.find(({ name }) => !name) ||
-      theirArmy.secondaries.find(({ name }) => !name);
+      theirArmy.secondaries.find(({ name }) => !name)
+    );
 
     return (
       <>
@@ -182,35 +244,43 @@ const PlayerView = ({ army1, army2, status, userId }: PlayerViewProps) => {
             }
           />
         ))}
-        <button
-          onClick={() =>
-            udpateSecondaries({
-              variables: {
-                s1: secondaries[0].name,
-                s2: secondaries[1].name,
-                s3: secondaries[2].name,
-                s1ID: secondaries[0].id,
-                s2ID: secondaries[1].id,
-                s3ID: secondaries[2].id,
-              },
-            })
-          }
+        <div
+          css={{
+            display: "flex",
+            justifyContent: "space-around",
+            paddingTop: 8,
+          }}
         >
-          Finalise secondaries
-        </button>
-        <button
-          disabled={!cantMoveFromBattle}
-          onClick={() => activateBattle({ variables: { id } })}
-        >
-          Begin Battle
-        </button>
+          <Button
+            onClick={() =>
+              udpateSecondaries({
+                variables: {
+                  s1: secondaries[0].name,
+                  s2: secondaries[1].name,
+                  s3: secondaries[2].name,
+                  s1ID: secondaries[0].id,
+                  s2ID: secondaries[1].id,
+                  s3ID: secondaries[2].id,
+                },
+              })
+            }
+          >
+            Finalise secondaries
+          </Button>
+          <Button
+            disabled={cantMoveFromBattle}
+            onClick={() => activateBattle({ variables: { id } })}
+          >
+            Begin Battle
+          </Button>
+        </div>
       </>
     );
   } else if (status === "inProgress") {
     return (
       <>
-        <Board {...myArmy} />
-        <Board {...theirArmy} />
+        <Board {...myArmy} isInteractable={true} />
+        <Board {...theirArmy} isInteractable={true} />
         <button onClick={() => activateBattle({ variables: { id } })}>
           End Battle
         </button>
@@ -234,9 +304,18 @@ const PlayerView = ({ army1, army2, status, userId }: PlayerViewProps) => {
   }
 };
 
-const Header = ({ army1, army2 }) => (
+// TODO: highlight which you are from this
+const Header = ({
+  army1,
+  army2,
+  userId,
+}: {
+  userId?: String;
+  army1: BattleInfo;
+  army2: BattleInfo;
+}) => (
   <h1>
-    {army1.name} vs. {army2.name}
+    {army1.army.name} vs. {army2.army.name}
   </h1>
 );
 
@@ -245,6 +324,7 @@ const BattleView = () => {
     query: { id },
   } = useRouter();
   const { error, refetch, data: battleData } = useQuery(GET_BATTLE, {
+    // @ts-ignore
     variables: { id },
   });
 
@@ -269,7 +349,7 @@ const BattleView = () => {
   ) {
     return (
       <>
-        <Header army1={army1} army2={army2} />
+        <Header army1={army1} army2={army2} userId={authenticatedUser.id} />
         <PlayerView {...Battle} userId={authenticatedUser.id} />
       </>
     );

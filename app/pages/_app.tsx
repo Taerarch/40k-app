@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { jsx } from "@emotion/core";
 import { ApolloProvider } from "@apollo/client";
 import { useApollo } from "../lib/apolloClient";
 
@@ -7,12 +9,16 @@ const AppComponent = ({ Component, pageProps }) => {
   const apolloClient = useApollo(pageProps.initialApolloState);
 
   return (
-    <div>
+    <>
       <ApolloProvider client={apolloClient}>
-        <LoginControl />
-        <Component {...pageProps} />
+        <div>
+          <LoginControl />
+          <div css={{ maxWidth: 640, padding: 16 }}>
+            <Component {...pageProps} />
+          </div>
+        </div>
       </ApolloProvider>
-    </div>
+    </>
   );
 };
 

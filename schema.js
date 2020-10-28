@@ -97,6 +97,7 @@ module.exports.BattleInfo = {
     army: { type: Relationship, ref: "Army" },
     primary: { type: Relationship, ref: "Objective" },
     secondaries: { type: Relationship, ref: "Objective", many: true },
+    CP: { type: Integer, defaultValue: 0 },
     notes: { type: Markdown },
   },
 };

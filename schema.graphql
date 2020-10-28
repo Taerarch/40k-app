@@ -661,6 +661,7 @@ type BattleInfo {
   primary: Objective
   secondaries(where: ObjectiveWhereInput, search: String, sortBy: [SortObjectivesBy!], orderBy: String, first: Int, skip: Int): [Objective!]!
   _secondariesMeta(where: ObjectiveWhereInput, search: String, sortBy: [SortObjectivesBy!], orderBy: String, first: Int, skip: Int): _QueryMeta
+  CP: Int
   notes: String
 }
 
@@ -685,6 +686,14 @@ input BattleInfoWhereInput {
   secondaries_some: ObjectiveWhereInput
   """ condition must be false for all nodes """
   secondaries_none: ObjectiveWhereInput
+  CP: Int
+  CP_not: Int
+  CP_lt: Int
+  CP_lte: Int
+  CP_gt: Int
+  CP_gte: Int
+  CP_in: [Int]
+  CP_not_in: [Int]
   notes: String
   notes_not: String
   notes_contains: String
@@ -718,6 +727,8 @@ enum SortBattleInfosBy {
   primary_DESC
   secondaries_ASC
   secondaries_DESC
+  CP_ASC
+  CP_DESC
   notes_ASC
   notes_DESC
 }
@@ -726,6 +737,7 @@ input BattleInfoUpdateInput {
   army: ArmyRelateToOneInput
   primary: ObjectiveRelateToOneInput
   secondaries: ObjectiveRelateToManyInput
+  CP: Int
   notes: String
 }
 
@@ -738,6 +750,7 @@ input BattleInfoCreateInput {
   army: ArmyRelateToOneInput
   primary: ObjectiveRelateToOneInput
   secondaries: ObjectiveRelateToManyInput
+  CP: Int
   notes: String
 }
 

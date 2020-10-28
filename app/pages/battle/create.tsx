@@ -63,20 +63,6 @@ const CREATE_BATTLE = gql`
       }
     ) {
       id
-      army1 {
-        id
-        army {
-          id
-          name
-        }
-      }
-      army2 {
-        id
-        army {
-          id
-          name
-        }
-      }
     }
   }
 ` as import("../../../__generated__/ts-gql/createABattle").type;
@@ -102,13 +88,14 @@ const Create = () => {
   const [description, setDescription] = useState("");
   const { push } = useRouter();
 
-  const { loading, data: { allArmies } = {}, error } = useQuery(GET_ARMIES);
-  const [createABattle, { data: { createBattle = {} } = {} }] = useMutation(
-    CREATE_BATTLE
-  );
+  const { data } = useQuery(GET_ARMIES);
+  const [createABattle, { data: createData }] = useMutation(CREATE_BATTLE);
 
-  if (createBattle?.id) {
-    push(`/battle/${createBattle.id}`);
+  if (!data) return "loading";
+  const { allArmies } = data;
+
+  if (createData) {
+    push(`/battle/${createData.createBattle.id}`);
   }
 
   const createDisabled = !(

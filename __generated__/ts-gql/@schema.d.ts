@@ -1,8 +1,8 @@
-// ts-gql-integrity:eefc4c884685adad2a71a9d534e249d0
+// ts-gql-integrity:fec1d3ce578a4a05d7158b5148e4e8e1
 /*
 ts-gql-meta-begin
 {
-  "hash": "ecc8cb1c35e4c8f5933ca114cc2fff77"
+  "hash": "83dbc71c52e52e55a780de34f98c2caa"
 }
 ts-gql-meta-end
 */
@@ -731,6 +731,7 @@ export type BattleInfo = {
   readonly primary: Maybe<Objective>;
   readonly secondaries: ReadonlyArray<Objective>;
   readonly _secondariesMeta: Maybe<_QueryMeta>;
+  readonly CP: Maybe<Scalars['Int']>;
   readonly notes: Maybe<Scalars['String']>;
 };
 
@@ -777,6 +778,14 @@ export type BattleInfoWhereInput = {
   readonly secondaries_some?: Maybe<ObjectiveWhereInput>;
   /**  condition must be false for all nodes  */
   readonly secondaries_none?: Maybe<ObjectiveWhereInput>;
+  readonly CP?: Maybe<Scalars['Int']>;
+  readonly CP_not?: Maybe<Scalars['Int']>;
+  readonly CP_lt?: Maybe<Scalars['Int']>;
+  readonly CP_lte?: Maybe<Scalars['Int']>;
+  readonly CP_gt?: Maybe<Scalars['Int']>;
+  readonly CP_gte?: Maybe<Scalars['Int']>;
+  readonly CP_in?: Maybe<ReadonlyArray<Maybe<Scalars['Int']>>>;
+  readonly CP_not_in?: Maybe<ReadonlyArray<Maybe<Scalars['Int']>>>;
   readonly notes?: Maybe<Scalars['String']>;
   readonly notes_not?: Maybe<Scalars['String']>;
   readonly notes_contains?: Maybe<Scalars['String']>;
@@ -810,6 +819,8 @@ export type SortBattleInfosBy =
   | 'primary_DESC'
   | 'secondaries_ASC'
   | 'secondaries_DESC'
+  | 'CP_ASC'
+  | 'CP_DESC'
   | 'notes_ASC'
   | 'notes_DESC';
 
@@ -817,6 +828,7 @@ export type BattleInfoUpdateInput = {
   readonly army?: Maybe<ArmyRelateToOneInput>;
   readonly primary?: Maybe<ObjectiveRelateToOneInput>;
   readonly secondaries?: Maybe<ObjectiveRelateToManyInput>;
+  readonly CP?: Maybe<Scalars['Int']>;
   readonly notes?: Maybe<Scalars['String']>;
 };
 
@@ -829,6 +841,7 @@ export type BattleInfoCreateInput = {
   readonly army?: Maybe<ArmyRelateToOneInput>;
   readonly primary?: Maybe<ObjectiveRelateToOneInput>;
   readonly secondaries?: Maybe<ObjectiveRelateToManyInput>;
+  readonly CP?: Maybe<Scalars['Int']>;
   readonly notes?: Maybe<Scalars['String']>;
 };
 

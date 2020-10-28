@@ -34,29 +34,22 @@ const LOG_OUT = gql`
   }
 ` as import("../../__generated__/ts-gql/unauthUser").type;
 
+const styles = {};
+
 const Login = () => {
   let emailInput, passwordInput;
-  const {
-    data: { authenticatedUser } = {},
-    refetch,
-    loading,
-    error,
-  } = useQuery(AUTHED_USER);
-  const [authUser, { data }] = useMutation(AUTH_USER, {
-    onCompleted: () => refetch(),
-  });
-  const [logOut] = useMutation(LOG_OUT, {
-    onCompleted: () => refetch(),
-  });
+  const { data, loading, refetch } = useQuery(AUTHED_USER);
+  const [authUser] = useMutation(AUTH_USER);
+  const [logOut] = useMutation(LOG_OUT);
 
   if (loading) return null;
-  if (authenticatedUser?.name) {
+  if (data?.authenticatedUser?.name) {
     return (
-      <div>
-        {authenticatedUser.name}{" "}
+      <div css={styles}>
+        {data.authenticatedUser.name}{" "}
         <button
           onClick={() => {
-            logOut();
+            logOut().then(() => refetch());
           }}
         >
           Log out
@@ -66,7 +59,7 @@ const Login = () => {
   }
 
   return (
-    <div>
+    <div css={styles}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -100,7 +93,7 @@ const Login = () => {
               passwordInput = node;
             }}
             name="password"
-            minLength="8"
+            minLength={8}
             required
           />
         </div>

@@ -44,7 +44,7 @@ const BattleList = () => {
   const allBattles = data?.allBattles || [];
   const sortedBattles = [...allBattles].sort(
     // sort first to put in progress at the top
-    (a, b) => (b.stats === "inProgress" && a.status !== "inProgress" ? 1 : 0)
+    (a, b) => (b.status === "inProgress" && a.status !== "inProgress" ? 1 : 0)
   );
   // show a table of relevant info for each battle
   return (
