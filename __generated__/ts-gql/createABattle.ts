@@ -1,0 +1,59 @@
+// ts-gql-integrity:c9025252ed8dfb0e8139fe12e5fd5c0b
+/*
+ts-gql-meta-begin
+{
+  "hash": "a07da91b8ab2fe791007daf9fc41700b"
+}
+ts-gql-meta-end
+*/
+
+import * as SchemaTypes from "./@schema";
+import { TypedDocumentNode } from "@ts-gql/tag";
+
+type createABattleMutationVariables = SchemaTypes.Exact<{
+  points: SchemaTypes.Scalars['Int'];
+  description: SchemaTypes.Scalars['String'];
+  mission: SchemaTypes.Maybe<SchemaTypes.Scalars['String']>;
+  army1ID: SchemaTypes.Scalars['ID'];
+  army2ID: SchemaTypes.Scalars['ID'];
+}>;
+
+
+type createABattleMutation = (
+  { readonly __typename: 'Mutation' }
+  & { readonly createBattle: SchemaTypes.Maybe<(
+    { readonly __typename: 'Battle' }
+    & Pick<SchemaTypes.Battle, 'id'>
+    & { readonly army1: SchemaTypes.Maybe<(
+      { readonly __typename: 'BattleInfo' }
+      & Pick<SchemaTypes.BattleInfo, 'id'>
+      & { readonly army: SchemaTypes.Maybe<(
+        { readonly __typename: 'Army' }
+        & Pick<SchemaTypes.Army, 'id' | 'name'>
+      )> }
+    )>, readonly army2: SchemaTypes.Maybe<(
+      { readonly __typename: 'BattleInfo' }
+      & Pick<SchemaTypes.BattleInfo, 'id'>
+      & { readonly army: SchemaTypes.Maybe<(
+        { readonly __typename: 'Army' }
+        & Pick<SchemaTypes.Army, 'id' | 'name'>
+      )> }
+    )> }
+  )> }
+);
+
+
+export type type = TypedDocumentNode<{
+  type: "mutation";
+  result: createABattleMutation;
+  variables: createABattleMutationVariables;
+  documents: SchemaTypes.TSGQLDocuments;
+}>
+
+declare module "./@schema" {
+  interface TSGQLDocuments {
+    createABattle: type;
+  }
+}
+
+export const document = JSON.parse("{\"kind\":\"Document\",\"definitions\":[{\"kind\":\"OperationDefinition\",\"operation\":\"mutation\",\"name\":{\"kind\":\"Name\",\"value\":\"createABattle\"},\"variableDefinitions\":[{\"kind\":\"VariableDefinition\",\"variable\":{\"kind\":\"Variable\",\"name\":{\"kind\":\"Name\",\"value\":\"points\"}},\"type\":{\"kind\":\"NonNullType\",\"type\":{\"kind\":\"NamedType\",\"name\":{\"kind\":\"Name\",\"value\":\"Int\"}}},\"directives\":[]},{\"kind\":\"VariableDefinition\",\"variable\":{\"kind\":\"Variable\",\"name\":{\"kind\":\"Name\",\"value\":\"description\"}},\"type\":{\"kind\":\"NonNullType\",\"type\":{\"kind\":\"NamedType\",\"name\":{\"kind\":\"Name\",\"value\":\"String\"}}},\"directives\":[]},{\"kind\":\"VariableDefinition\",\"variable\":{\"kind\":\"Variable\",\"name\":{\"kind\":\"Name\",\"value\":\"mission\"}},\"type\":{\"kind\":\"NamedType\",\"name\":{\"kind\":\"Name\",\"value\":\"String\"}},\"directives\":[]},{\"kind\":\"VariableDefinition\",\"variable\":{\"kind\":\"Variable\",\"name\":{\"kind\":\"Name\",\"value\":\"army1ID\"}},\"type\":{\"kind\":\"NonNullType\",\"type\":{\"kind\":\"NamedType\",\"name\":{\"kind\":\"Name\",\"value\":\"ID\"}}},\"directives\":[]},{\"kind\":\"VariableDefinition\",\"variable\":{\"kind\":\"Variable\",\"name\":{\"kind\":\"Name\",\"value\":\"army2ID\"}},\"type\":{\"kind\":\"NonNullType\",\"type\":{\"kind\":\"NamedType\",\"name\":{\"kind\":\"Name\",\"value\":\"ID\"}}},\"directives\":[]}],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"createBattle\"},\"arguments\":[{\"kind\":\"Argument\",\"name\":{\"kind\":\"Name\",\"value\":\"data\"},\"value\":{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"points\"},\"value\":{\"kind\":\"Variable\",\"name\":{\"kind\":\"Name\",\"value\":\"points\"}}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"description\"},\"value\":{\"kind\":\"Variable\",\"name\":{\"kind\":\"Name\",\"value\":\"description\"}}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"mission\"},\"value\":{\"kind\":\"Variable\",\"name\":{\"kind\":\"Name\",\"value\":\"mission\"}}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"status\"},\"value\":{\"kind\":\"EnumValue\",\"value\":\"planning\"}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"army1\"},\"value\":{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"create\"},\"value\":{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"army\"},\"value\":{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"connect\"},\"value\":{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"id\"},\"value\":{\"kind\":\"Variable\",\"name\":{\"kind\":\"Name\",\"value\":\"army1ID\"}}}]}}]}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"primary\"},\"value\":{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"create\"},\"value\":{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"name\"},\"value\":{\"kind\":\"StringValue\",\"value\":\"Primary\",\"block\":false}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"score\"},\"value\":{\"kind\":\"IntValue\",\"value\":\"0\"}}]}}]}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"secondaries\"},\"value\":{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"create\"},\"value\":{\"kind\":\"ListValue\",\"values\":[{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"name\"},\"value\":{\"kind\":\"StringValue\",\"value\":\"\",\"block\":false}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"score\"},\"value\":{\"kind\":\"IntValue\",\"value\":\"0\"}}]},{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"name\"},\"value\":{\"kind\":\"StringValue\",\"value\":\"\",\"block\":false}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"score\"},\"value\":{\"kind\":\"IntValue\",\"value\":\"0\"}}]},{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"name\"},\"value\":{\"kind\":\"StringValue\",\"value\":\"\",\"block\":false}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"score\"},\"value\":{\"kind\":\"IntValue\",\"value\":\"0\"}}]}]}}]}}]}}]}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"army2\"},\"value\":{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"create\"},\"value\":{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"army\"},\"value\":{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"connect\"},\"value\":{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"id\"},\"value\":{\"kind\":\"Variable\",\"name\":{\"kind\":\"Name\",\"value\":\"army2ID\"}}}]}}]}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"primary\"},\"value\":{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"create\"},\"value\":{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"name\"},\"value\":{\"kind\":\"StringValue\",\"value\":\"Primary\",\"block\":false}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"score\"},\"value\":{\"kind\":\"IntValue\",\"value\":\"0\"}}]}}]}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"secondaries\"},\"value\":{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"create\"},\"value\":{\"kind\":\"ListValue\",\"values\":[{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"name\"},\"value\":{\"kind\":\"StringValue\",\"value\":\"\",\"block\":false}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"score\"},\"value\":{\"kind\":\"IntValue\",\"value\":\"0\"}}]},{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"name\"},\"value\":{\"kind\":\"StringValue\",\"value\":\"\",\"block\":false}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"score\"},\"value\":{\"kind\":\"IntValue\",\"value\":\"0\"}}]},{\"kind\":\"ObjectValue\",\"fields\":[{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"name\"},\"value\":{\"kind\":\"StringValue\",\"value\":\"\",\"block\":false}},{\"kind\":\"ObjectField\",\"name\":{\"kind\":\"Name\",\"value\":\"score\"},\"value\":{\"kind\":\"IntValue\",\"value\":\"0\"}}]}]}}]}}]}}]}}]}}],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"id\"},\"arguments\":[],\"directives\":[]},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"army1\"},\"arguments\":[],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"id\"},\"arguments\":[],\"directives\":[]},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"army\"},\"arguments\":[],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"id\"},\"arguments\":[],\"directives\":[]},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"name\"},\"arguments\":[],\"directives\":[]}]}}]}},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"army2\"},\"arguments\":[],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"id\"},\"arguments\":[],\"directives\":[]},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"army\"},\"arguments\":[],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"id\"},\"arguments\":[],\"directives\":[]},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"name\"},\"arguments\":[],\"directives\":[]}]}}]}}]}}]}}]}")

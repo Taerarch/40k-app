@@ -49,7 +49,7 @@ const CREATE_BATTLE = gql`
         }
         army2: {
           create: {
-            army: { connect: { id: $army1ID } }
+            army: { connect: { id: $army2ID } }
             primary: { create: { name: "Primary", score: 0 } }
             secondaries: {
               create: [
@@ -64,18 +64,22 @@ const CREATE_BATTLE = gql`
     ) {
       id
       army1 {
+        id
         army {
+          id
           name
         }
       }
       army2 {
+        id
         army {
+          id
           name
         }
       }
     }
   }
-`;
+` as import("../../../__generated__/ts-gql/createABattle").type;
 
 const ArmySelect = ({ allArmies, onChange }) => (
   <Select
@@ -100,10 +104,7 @@ const Create = () => {
 
   const { loading, data: { allArmies } = {}, error } = useQuery(GET_ARMIES);
   const [createABattle, { data: { createBattle = {} } = {} }] = useMutation(
-    CREATE_BATTLE,
-    {
-      onCompleted: (thing) => console.log(thing),
-    }
+    CREATE_BATTLE
   );
 
   if (createBattle?.id) {

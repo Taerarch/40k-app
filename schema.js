@@ -75,8 +75,6 @@ module.exports.Unit = {
   },
 };
 
-console.log(objectToOptions(battleStatuses));
-
 module.exports.Battle = {
   fields: {
     army1: { type: Relationship, ref: "BattleInfo" },

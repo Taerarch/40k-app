@@ -1,35 +1,35 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
 import { useMutation, useQuery } from "@ts-gql/apollo";
-import { gql } from "@ts-gql/tag";
+import { gql, FragmentData } from "@ts-gql/tag";
 
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-const reshapeArmyBattleInfo = (battlefieldInfo) => {
-  return {
-    ...battlefieldInfo,
-    name: `${battlefieldInfo.army.owner.name}'s ${battlefieldInfo.army.faction} (${battlefieldInfo.army.name})`,
-    primary: {
-      name: "Primary",
-      score: battlefieldInfo.primaryScore,
-    },
-    secondaries: [
-      {
-        name: battlefieldInfo.secondary1,
-        score: battlefieldInfo.secondary1Score,
-      },
-      {
-        name: battlefieldInfo.secondary2,
-        score: battlefieldInfo.secondary2Score,
-      },
-      {
-        name: battlefieldInfo.secondary3,
-        score: battlefieldInfo.secondary3Score,
-      },
-    ],
-  };
-};
+const fragment = gql`
+  fragment Army_info on BattleInfo {
+    id
+    primary {
+      id
+      name
+      score
+    }
+    secondaries {
+      id
+      name
+      score
+    }
+    army {
+      id
+      name
+      faction
+      owner {
+        id
+        name
+      }
+    }
+  }
+` as import("../../../__generated__/ts-gql/Army_info").type;
 
 const GET_BATTLE = gql`
   query getBattle($id: ID!) {
@@ -37,48 +37,10 @@ const GET_BATTLE = gql`
       status
       id
       army1 {
-        id
-        primary {
-          id
-          name
-          score
-        }
-        secondaries {
-          id
-          name
-          score
-        }
-        army {
-          id
-          name
-          faction
-          owner {
-            id
-            name
-          }
-        }
+        ...Army_info
       }
       army2 {
-        id
-        primary {
-          id
-          name
-          score
-        }
-        secondaries {
-          id
-          name
-          score
-        }
-        army {
-          id
-          name
-          faction
-          owner {
-            id
-            name
-          }
-        }
+        ...Army_info
       }
     }
   }
@@ -93,16 +55,24 @@ const AUTHED_USER = gql`
 ` as import("../../../__generated__/ts-gql/getAuthedUser").type;
 const UPDATE_SECONDARIES = gql`
   mutation udpateSecondaries(
-    $id: ID!
-    $secondary1: String!
-    $secondary2: String!
-    $secondary3: String!
+    $s1: String!
+    $s1ID: ID!
+    $s2: String!
+    $s2ID: ID!
+    $s3: String!
+    $s3ID: ID!
   ) {
-    # updateObjectives {
-      
-    # }
+    updateObjectives(
+      data: [
+        { id: $s1ID, data: { name: $s1 } }
+        { id: $s2ID, data: { name: $s2 } }
+        { id: $s3ID, data: { name: $s3 } }
+      ]
+    ) {
+      id
+    }
   }
-`;
+` as import("../../../__generated__/ts-gql/udpateSecondaries").type;
 
 const MAKE_BATTLE_ACTIVE = gql`
   mutation activateBattle($id: ID!) {
@@ -110,7 +80,8 @@ const MAKE_BATTLE_ACTIVE = gql`
       id
     }
   }
-`;
+` as import("../../../__generated__/ts-gql/activateBattle").type;
+
 const SpectatorMode = ({ status, army1, army2 }) => {
   if (status === "planning") {
     return <div>"waiting for game to commence"</div>;
@@ -135,16 +106,19 @@ const Imp = ({ name, score, isInteractable, onChange }) => (
   </li>
 );
 
+type BoardProps = Readonly<FragmentData<typeof fragment>> & {
+  isInteractable?: boolean;
+};
+
 const Board = ({
-  name,
   primary,
   secondaries,
   isInteractable = false,
   army,
-}) => {
+}: BoardProps) => {
   return (
     <div>
-      <h2>{name}</h2>
+      <h2>{army.owner.name}</h2>
       <ul>
         <Imp {...primary} onChange={() => {}} isInteractable={isInteractable} />
         {secondaries.map((secondary) => (
@@ -175,13 +149,17 @@ const PickSecondary = ({ num, onChange, name }) => (
   </>
 );
 
-const PlayerView = ({ myArmy, theirArmy, status, refetch, id }) => {
+type PlayerViewProps = typeof GET_BATTLE.___type.result.Battle & {
+  userId: String;
+};
+
+const PlayerView = ({ army1, army2, status, userId }: PlayerViewProps) => {
+  const myArmy = army1.army.owner.id === userId ? army1 : army2;
+  const theirArmy = army1.army.owner.id !== userId ? army1 : army2;
   const [secondaries, setSecondaries] = useState(myArmy.secondaries);
 
   const [udpateSecondaries] = useMutation(UPDATE_SECONDARIES);
-  const [activateBattle, { error }] = useMutation(MAKE_BATTLE_ACTIVE, {
-    onCompleted: () => refetch(),
-  });
+  const [activateBattle] = useMutation(MAKE_BATTLE_ACTIVE);
 
   if (status === "planning") {
     const cantMoveFromBattle =
@@ -208,10 +186,12 @@ const PlayerView = ({ myArmy, theirArmy, status, refetch, id }) => {
           onClick={() =>
             udpateSecondaries({
               variables: {
-                id: myArmy.id,
-                secondary1: secondaries[0].name,
-                secondary2: secondaries[1].name,
-                secondary3: secondaries[2].name,
+                s1: secondaries[0].name,
+                s2: secondaries[1].name,
+                s3: secondaries[2].name,
+                s1ID: secondaries[0].id,
+                s2ID: secondaries[1].id,
+                s3ID: secondaries[2].id,
               },
             })
           }
@@ -264,48 +244,33 @@ const BattleView = () => {
   const {
     query: { id },
   } = useRouter();
-  const {
-    loading: armyDataLoading,
-    error,
-    refetch,
-    data: { Battle } = {},
-  } = useQuery(GET_BATTLE, {
+  const { error, refetch, data: battleData } = useQuery(GET_BATTLE, {
     variables: { id },
   });
 
-  const {
-    loading: loggedInUserLoading,
-    data: { authenticatedUser } = {},
-  } = useQuery(AUTHED_USER);
+  const { data: userData } = useQuery(AUTHED_USER);
 
-  if (armyDataLoading && loggedInUserLoading) {
+  if (!battleData || !userData) {
     return <div>Fetching info for the battle</div>;
   }
 
-  if (!authenticatedUser || !Battle) {
-    return <div>Please Log in to see the battle</div>;
-  }
+  const { Battle } = battleData;
+  const { authenticatedUser } = userData;
 
-  const { armyBattleInfo1, armyBattleInfo2, ...rest } = Battle;
-  const army1 = reshapeArmyBattleInfo(armyBattleInfo1);
-  const army2 = reshapeArmyBattleInfo(armyBattleInfo2);
+  const { army1, army2, ...rest } = Battle;
 
   if (error) {
     // TODO this will swallow random errors and is therefore bad
     // push("/battle/create");
     return null;
-  } else if (authenticatedUser.id === army1?.army?.owner?.id) {
+  } else if (
+    authenticatedUser.id === army1.army.owner.id ||
+    authenticatedUser.id === army2.army.owner.id
+  ) {
     return (
       <>
         <Header army1={army1} army2={army2} />
-        <PlayerView myArmy={army1} theirArmy={army2} {...rest} />
-      </>
-    );
-  } else if (authenticatedUser.id === army2?.army?.owner?.id) {
-    return (
-      <>
-        <Header army1={army2} army2={army1} />
-        <PlayerView myArmy={army2} theirArmy={army1} {...rest} />{" "}
+        <PlayerView {...Battle} userId={authenticatedUser.id} />
       </>
     );
   } else {
