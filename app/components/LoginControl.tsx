@@ -2,6 +2,7 @@
 import { jsx } from "@emotion/core";
 import { useMutation, useQuery } from "@ts-gql/apollo";
 import { gql } from "@ts-gql/tag";
+import { useState } from "react";
 
 const AUTH_USER = gql`
   mutation signin($email: String, $password: String) {
@@ -34,74 +35,110 @@ const LOG_OUT = gql`
   }
 ` as import("../../__generated__/ts-gql/unauthUser").type;
 
-const styles = {};
-
-const Login = () => {
-  let emailInput, passwordInput;
-  const { data, loading, refetch } = useQuery(AUTHED_USER);
-  const [authUser] = useMutation(AUTH_USER);
-  const [logOut] = useMutation(LOG_OUT);
-
-  if (loading) return null;
-  if (data?.authenticatedUser?.name) {
-    return (
-      <div css={styles}>
-        {data.authenticatedUser.name}{" "}
-        <button
-          onClick={() => {
-            logOut().then(() => refetch());
-          }}
-        >
-          Log out
-        </button>
-      </div>
-    );
-  }
+const LoggedIn = ({ name }) => {
+  const [logOut, { client }] = useMutation(LOG_OUT);
 
   return (
-    <div css={styles}>
+    <div>
+      <span css={{ paddingRight: 8 }}>{name}</span>
+      <button
+        css={{ padding: 4 }}
+        onClick={() => {
+          logOut().then(() => client.resetStore());
+        }}
+      >
+        Log out
+      </button>
+    </div>
+  );
+};
+
+const Input = ({ label, ...rest }) => (
+  <div css={{ paddingTop: 12 }}>
+    <label
+      css={{
+        width: 80,
+        display: "inline-block",
+        textAlign: "right",
+        paddingRight: 4,
+      }}
+      htmlFor="email"
+    >
+      {label}:
+    </label>
+    <input {...rest} />
+  </div>
+);
+
+const LogIn = () => {
+  const [authUser, { client }] = useMutation(AUTH_USER);
+  const [email, updateEmail] = useState("");
+  const [password, updatePassword] = useState("");
+
+  return (
+    <div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
 
           authUser({
             variables: {
-              email: emailInput.value,
-              password: passwordInput.value,
+              email,
+              password,
             },
-          });
+          }).then(() => client.resetStore());
         }}
       >
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="text"
-            id="email"
-            name="email"
-            ref={(node) => {
-              emailInput = node;
-            }}
-          />
+        <Input
+          label="Email"
+          type="text"
+          id="email"
+          name="email"
+          value={email}
+          onChange={({ target }) => updateEmail(target.value)}
+          required
+        />
+        <Input
+          label="Password"
+          type="password"
+          id="pass"
+          onChange={({ target }) => updatePassword(target.value)}
+          value={password}
+          name="password"
+          minLength={8}
+          required
+        />
+        <div
+          css={{
+            display: "flex",
+            justifyContent: "space-between",
+            paddingTop: 4,
+          }}
+        >
+          <div />
+          <input css={{ padding: 4 }} type="submit" value="Sign in" />
         </div>
-
-        <div>
-          <label htmlFor="pass">Password:</label>
-          <input
-            type="password"
-            id="pass"
-            ref={(node) => {
-              passwordInput = node;
-            }}
-            name="password"
-            minLength={8}
-            required
-          />
-        </div>
-
-        <input type="submit" value="Sign in" />
       </form>
     </div>
   );
 };
 
-export default Login;
+const UserState = () => {
+  const { data } = useQuery(AUTHED_USER);
+
+  if (!data) return null;
+  if (data?.authenticatedUser?.name) {
+    return <LoggedIn name={data.authenticatedUser.name} />;
+  }
+
+  return <LogIn />;
+};
+
+const Blocks = () => (
+  <div css={{ display: "flex", justifyContent: "space-between" }}>
+    <div></div>
+    <UserState />
+  </div>
+);
+
+export default Blocks;

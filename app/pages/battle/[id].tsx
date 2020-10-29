@@ -5,13 +5,13 @@ import { gql, FragmentData } from "@ts-gql/tag";
 
 import { useRouter } from "next/router";
 import { useState } from "react";
-
-import { palette } from "../../../palette";
+import { Button } from "../../components/Button";
 
 const fragment = gql`
   fragment Army_info on BattleInfo {
     id
     CP
+    notes
     primary {
       id
       name
@@ -65,14 +65,16 @@ const AUTHED_USER = gql`
     }
   }
 ` as import("../../../__generated__/ts-gql/getAuthedUser").type;
-const UPDATE_SECONDARIES = gql`
-  mutation udpateSecondaries(
+const UPDATE_INFO = gql`
+  mutation preBattleUpdateInfo(
     $s1: String!
     $s1ID: ID!
     $s2: String!
     $s2ID: ID!
     $s3: String!
     $s3ID: ID!
+    $armyInfoID: ID!
+    $notes: String!
   ) {
     updateObjectives(
       data: [
@@ -84,8 +86,12 @@ const UPDATE_SECONDARIES = gql`
       id
       name
     }
+    updateBattleInfo(id: $armyInfoID, data: { notes: $notes }) {
+      id
+      notes
+    }
   }
-` as import("../../../__generated__/ts-gql/udpateSecondaries").type;
+` as import("../../../__generated__/ts-gql/preBattleUpdateInfo").type;
 
 const MAKE_BATTLE_ACTIVE = gql`
   mutation activateBattle($id: ID!) {
@@ -97,14 +103,9 @@ const MAKE_BATTLE_ACTIVE = gql`
 
 const SpectatorMode = ({ status, army1, army2 }) => {
   if (status === "planning") {
-    return <div>"waiting for game to commence"</div>;
+    return <div>Spectator mode: "waiting for game to commence"</div>;
   } else if (status === "inProgress") {
-    return (
-      <>
-        <Board {...army1} isInteractable={false} />
-        <Board {...army2} isInteractable={false} />
-      </>
-    );
+    return <Boards army1={army1} army2={army2} isInteractable={false} />;
   } else if (status === "completed") {
     return <div>"completed scene"</div>;
   } else {
@@ -112,12 +113,19 @@ const SpectatorMode = ({ status, army1, army2 }) => {
   }
 };
 
-const Imp = ({ name, score, isInteractable, onChange }) => (
+const Imp = ({ name, score, isInteractable, onChange, max = 15 }) => (
   <li key={name} css={{ display: "flex", justifyContent: "space-between" }}>
     <span>{name}:</span>
     <span>
       {isInteractable ? (
-        <input value={score} onChange={onChange} css={{ width: 20 }} />
+        <input
+          type="number"
+          value={score}
+          onChange={onChange}
+          css={{ width: 40, textAlign: "center" }}
+          min="0"
+          max={max}
+        />
       ) : (
         score
       )}
@@ -129,7 +137,6 @@ type BattleInfo = Readonly<FragmentData<typeof fragment>>;
 
 type BoardProps = BattleInfo & {
   isInteractable?: boolean;
-  CP: number;
 };
 
 const Board = ({
@@ -142,14 +149,15 @@ const Board = ({
   const [updateObjective] = useMutation(UPDATE_OBJECTIVE);
 
   return (
-    <div>
+    <div css={{ maxWidth: 200, display: "inline-block" }}>
       <h2>{army.owner.name}</h2>
       <ul css={{ padding: 0 }}>
         <Imp
           {...primary}
+          max={45}
           onChange={({ target }) =>
             updateObjective({
-              variables: { id: primary.id, score: target.value },
+              variables: { id: primary.id, score: parseInt(target.value) },
             })
           }
           isInteractable={isInteractable}
@@ -160,7 +168,7 @@ const Board = ({
             key={secondary.name}
             onChange={({ target }) =>
               updateObjective({
-                variables: { id: secondary.id, score: target.value },
+                variables: { id: secondary.id, score: parseInt(target.value) },
               })
             }
             isInteractable={isInteractable}
@@ -191,36 +199,138 @@ const PickSecondary = ({ num, onChange, name }) => (
 
 type PlayerViewProps = typeof GET_BATTLE.___type.result.Battle & {
   userId: String;
+  refetch: Function;
+  startPolling: Function;
 };
 
-const Button = (props) => (
-  <button
-    {...props}
-    css={{
-      padding: 8,
-      border: 0,
-      borderRadius: 15,
-      backgroundColor: palette.green100,
-      ":hover": {
-        backgroundColor: palette.green200,
-      },
-      ":active": {
-        backgroundColor: palette.green300,
-      },
-      ":disabled": {
-        backgroundColor: palette.neutral300,
-      },
-    }}
-  />
+const PlayerPlanning = ({ cantMoveFromBattle, army, id, refetch }) => {
+  // we assume if there is no army, that means that there
+  if (!army) {
+    return (
+      <div>Game has not yet started, please wait a bit before spectating</div>
+    );
+  }
+
+  const [secondaries, setSecondaries] = useState(army.secondaries);
+  const [notes, setNotes] = useState(army.notes || "");
+
+  const [preBattleUpdateInfo] = useMutation(UPDATE_INFO);
+  const [activateBattle] = useMutation(MAKE_BATTLE_ACTIVE);
+
+  return (
+    <>
+      {secondaries.map(({ name }, i) => (
+        <PickSecondary
+          key={i}
+          name={name}
+          num={i}
+          onChange={({ target }) =>
+            setSecondaries(
+              secondaries.map((s, i2) =>
+                i2 !== i ? s : { ...s, name: target.value }
+              )
+            )
+          }
+        />
+      ))}
+      <div>
+        <h2>Pre-mission notes:</h2>
+        <textarea
+          value={notes}
+          onChange={({ target }) => setNotes(target.value)}
+        />
+      </div>
+      <div
+        css={{
+          display: "flex",
+          justifyContent: "space-around",
+          paddingTop: 8,
+        }}
+      >
+        <Button
+          onClick={() =>
+            preBattleUpdateInfo({
+              variables: {
+                s1: secondaries[0].name,
+                s2: secondaries[1].name,
+                s3: secondaries[2].name,
+                s1ID: secondaries[0].id,
+                s2ID: secondaries[1].id,
+                s3ID: secondaries[2].id,
+                armyInfoID: army.id,
+                notes,
+              },
+            }).then(() => refetch())
+          }
+        >
+          Update Info
+        </Button>
+        <Button
+          disabled={cantMoveFromBattle}
+          onClick={() =>
+            activateBattle({ variables: { id } }).then(() => refetch())
+          }
+        >
+          Begin Battle
+        </Button>
+      </div>
+    </>
+  );
+};
+
+const END_BATTLE = gql`
+  mutation endBattle($id: ID!) {
+    updateBattle(id: $id, data: { status: completed }) {
+      id
+    }
+  }
+` as import("../../../__generated__/ts-gql/endBattle").type;
+
+const Boards = ({ army1, army2, isInteractable }) => (
+  <div css={{ display: "flex", justifyContent: "space-around" }}>
+    <Board {...army1} isInteractable={isInteractable} />
+    <Board {...army2} isInteractable={isInteractable} />
+  </div>
 );
 
-const PlayerView = ({ army1, army2, status, userId, id }: PlayerViewProps) => {
-  const myArmy = army1.army.owner.id === userId ? army1 : army2;
-  const theirArmy = army1.army.owner.id !== userId ? army1 : army2;
-  const [secondaries, setSecondaries] = useState(myArmy.secondaries);
+const PlayerPlaying = ({ theirArmy, myArmy, battleId }) => {
+  const [endBattle, { client }] = useMutation(END_BATTLE);
 
-  const [udpateSecondaries] = useMutation(UPDATE_SECONDARIES);
-  const [activateBattle] = useMutation(MAKE_BATTLE_ACTIVE);
+  return (
+    <>
+      <Boards army1={myArmy} army2={theirArmy} isInteractable />
+      <div css={{ display: "flex", justifyContent: "center", paddingTop: 24 }}>
+        <Button onClick={() => endBattle({ variables: { id: battleId } })}>
+          End Battle
+        </Button>
+      </div>
+    </>
+  );
+};
+
+const sortArmies = (army1, army2, userId) => {
+  let myArmy, theirArmy;
+
+  if (army1.army.owner.id === userId) {
+    myArmy = army1;
+    theirArmy = army2;
+  } else if (army2.army.owner.id === userId) {
+    myArmy = army2;
+    theirArmy = army1;
+  }
+  return { myArmy, theirArmy };
+};
+
+const PlayerView = ({
+  army1,
+  army2,
+  status,
+  userId,
+  id,
+  refetch,
+  startPolling,
+}: PlayerViewProps) => {
+  const { myArmy, theirArmy } = sortArmies(army1, army2, userId);
 
   if (status === "planning") {
     const cantMoveFromBattle = !!(
@@ -229,69 +339,24 @@ const PlayerView = ({ army1, army2, status, userId, id }: PlayerViewProps) => {
     );
 
     return (
-      <>
-        {secondaries.map(({ name }, i) => (
-          <PickSecondary
-            key={i}
-            name={name}
-            num={i}
-            onChange={({ target }) =>
-              setSecondaries(
-                secondaries.map((s, i2) =>
-                  i2 !== i ? s : { ...s, name: target.value }
-                )
-              )
-            }
-          />
-        ))}
-        <div
-          css={{
-            display: "flex",
-            justifyContent: "space-around",
-            paddingTop: 8,
-          }}
-        >
-          <Button
-            onClick={() =>
-              udpateSecondaries({
-                variables: {
-                  s1: secondaries[0].name,
-                  s2: secondaries[1].name,
-                  s3: secondaries[2].name,
-                  s1ID: secondaries[0].id,
-                  s2ID: secondaries[1].id,
-                  s3ID: secondaries[2].id,
-                },
-              })
-            }
-          >
-            Finalise secondaries
-          </Button>
-          <Button
-            disabled={cantMoveFromBattle}
-            onClick={() => activateBattle({ variables: { id } })}
-          >
-            Begin Battle
-          </Button>
-        </div>
-      </>
+      <PlayerPlanning
+        cantMoveFromBattle={cantMoveFromBattle}
+        army={myArmy}
+        id={id}
+        refetch={refetch}
+      />
     );
   } else if (status === "inProgress") {
+    startPolling(2000);
+
     return (
-      <>
-        <Board {...myArmy} isInteractable={true} />
-        <Board {...theirArmy} isInteractable={true} />
-        <button onClick={() => activateBattle({ variables: { id } })}>
-          End Battle
-        </button>
-      </>
+      <PlayerPlaying battleId={id} myArmy={myArmy} theirArmy={theirArmy} />
     );
   } else if (status === "completed") {
     return (
       <div>
         <p>This battle is over. Here is how it went down:</p>
-        <Board {...myArmy} isInteractable={false} />
-        <Board {...theirArmy} isInteractable={false} />
+        <Boards army1={myArmy} army2={theirArmy} isInteractable={false} />
       </div>
     );
   } else {
@@ -313,22 +378,47 @@ const Header = ({
   userId?: String;
   army1: BattleInfo;
   army2: BattleInfo;
-}) => (
-  <h1>
-    {army1.army.name} vs. {army2.army.name}
-  </h1>
-);
+}) => {
+  let { myArmy, theirArmy } = sortArmies(army1, army2, userId);
+  if (myArmy) {
+    return (
+      <h1 css={{ textAlign: "center" }}>
+        {myArmy.army.name} vs. {theirArmy.army.name}
+      </h1>
+    );
+  }
+  return (
+    <h1 css={{ textAlign: "center" }}>
+      {army1.army.name} vs. {army2.army.name}
+    </h1>
+  );
+};
 
 const BattleView = () => {
   const {
     query: { id },
   } = useRouter();
-  const { error, refetch, data: battleData } = useQuery(GET_BATTLE, {
-    // @ts-ignore
-    variables: { id },
-  });
+  const { error, refetch, data: battleData, startPolling } = useQuery(
+    GET_BATTLE,
+    {
+      // @ts-ignore
+      variables: { id },
+    }
+  );
 
   const { data: userData } = useQuery(AUTHED_USER);
+
+  if (error) {
+    return (
+      <div>
+        Something went wrong fetching data - maybe you are logged out? Here is
+        the full error: {JSON.stringify(error)}
+      </div>
+    );
+  }
+
+  console.log("battleData", battleData);
+  console.log("userData", userData);
 
   if (!battleData || !userData) {
     return <div>Fetching info for the battle</div>;
@@ -339,25 +429,23 @@ const BattleView = () => {
 
   const { army1, army2, ...rest } = Battle;
 
-  if (error) {
-    // TODO this will swallow random errors and is therefore bad
-    // push("/battle/create");
-    return null;
-  } else if (
-    authenticatedUser.id === army1.army.owner.id ||
-    authenticatedUser.id === army2.army.owner.id
-  ) {
+  if (sortArmies(army1, army2, authenticatedUser.id).myArmy) {
     return (
       <>
         <Header army1={army1} army2={army2} userId={authenticatedUser.id} />
-        <PlayerView {...Battle} userId={authenticatedUser.id} />
+        <PlayerView
+          {...Battle}
+          userId={authenticatedUser.id}
+          refetch={refetch}
+          startPolling={startPolling}
+        />
       </>
     );
   } else {
     return (
       <>
         <Header army1={army1} army2={army2} />
-        <SpectatorMode army1={army1} army2={army2} {...rest} />{" "}
+        <SpectatorMode army1={army1} army2={army2} {...rest} />
       </>
     );
   }
