@@ -15,7 +15,9 @@ const {
   BattleInfo,
   Mission,
   Objective,
+  ObjectiveOption,
 } = require("./schema");
+
 const PROJECT_NAME = "40k-app";
 
 process.env.CONNECT_TO = "postgres://localhost/40k-app";
@@ -33,6 +35,7 @@ keystone.createList("Battle", Battle);
 keystone.createList("BattleInfo", BattleInfo);
 keystone.createList("Mission", Mission);
 keystone.createList("Objective", Objective);
+keystone.createList("ObjectiveOption", ObjectiveOption);
 
 keystone.createList("Planet", {
   fields: {

@@ -1,8 +1,8 @@
-// ts-gql-integrity:fec1d3ce578a4a05d7158b5148e4e8e1
+// ts-gql-integrity:17118c57267ef74de487901fd711d9c4
 /*
 ts-gql-meta-begin
 {
-  "hash": "83dbc71c52e52e55a780de34f98c2caa"
+  "hash": "d3899649372bbd97d5c43061e6ba684a"
 }
 ts-gql-meta-end
 */
@@ -541,6 +541,13 @@ export type BattleInfoRelateToOneInput = {
   readonly disconnectAll?: Maybe<Scalars['Boolean']>;
 };
 
+export type MissionRelateToOneInput = {
+  readonly create?: Maybe<MissionCreateInput>;
+  readonly connect?: Maybe<MissionWhereUniqueInput>;
+  readonly disconnect?: Maybe<MissionWhereUniqueInput>;
+  readonly disconnectAll?: Maybe<Scalars['Boolean']>;
+};
+
 export type BattleStatusType = 
   | 'planning'
   | 'inProgress'
@@ -561,7 +568,7 @@ export type Battle = {
   readonly army1: Maybe<BattleInfo>;
   readonly army2: Maybe<BattleInfo>;
   readonly points: Maybe<Scalars['Int']>;
-  readonly mission: Maybe<Scalars['String']>;
+  readonly mission: Maybe<Mission>;
   readonly setupDescription: Maybe<Scalars['String']>;
   readonly description: Maybe<Scalars['String']>;
   readonly status: Maybe<BattleStatusType>;
@@ -590,24 +597,8 @@ export type BattleWhereInput = {
   readonly points_gte?: Maybe<Scalars['Int']>;
   readonly points_in?: Maybe<ReadonlyArray<Maybe<Scalars['Int']>>>;
   readonly points_not_in?: Maybe<ReadonlyArray<Maybe<Scalars['Int']>>>;
-  readonly mission?: Maybe<Scalars['String']>;
-  readonly mission_not?: Maybe<Scalars['String']>;
-  readonly mission_contains?: Maybe<Scalars['String']>;
-  readonly mission_not_contains?: Maybe<Scalars['String']>;
-  readonly mission_starts_with?: Maybe<Scalars['String']>;
-  readonly mission_not_starts_with?: Maybe<Scalars['String']>;
-  readonly mission_ends_with?: Maybe<Scalars['String']>;
-  readonly mission_not_ends_with?: Maybe<Scalars['String']>;
-  readonly mission_i?: Maybe<Scalars['String']>;
-  readonly mission_not_i?: Maybe<Scalars['String']>;
-  readonly mission_contains_i?: Maybe<Scalars['String']>;
-  readonly mission_not_contains_i?: Maybe<Scalars['String']>;
-  readonly mission_starts_with_i?: Maybe<Scalars['String']>;
-  readonly mission_not_starts_with_i?: Maybe<Scalars['String']>;
-  readonly mission_ends_with_i?: Maybe<Scalars['String']>;
-  readonly mission_not_ends_with_i?: Maybe<Scalars['String']>;
-  readonly mission_in?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
-  readonly mission_not_in?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly mission?: Maybe<MissionWhereInput>;
+  readonly mission_is_null?: Maybe<Scalars['Boolean']>;
   readonly setupDescription?: Maybe<Scalars['String']>;
   readonly setupDescription_not?: Maybe<Scalars['String']>;
   readonly setupDescription_contains?: Maybe<Scalars['String']>;
@@ -676,7 +667,7 @@ export type BattleUpdateInput = {
   readonly army1?: Maybe<BattleInfoRelateToOneInput>;
   readonly army2?: Maybe<BattleInfoRelateToOneInput>;
   readonly points?: Maybe<Scalars['Int']>;
-  readonly mission?: Maybe<Scalars['String']>;
+  readonly mission?: Maybe<MissionRelateToOneInput>;
   readonly setupDescription?: Maybe<Scalars['String']>;
   readonly description?: Maybe<Scalars['String']>;
   readonly status?: Maybe<BattleStatusType>;
@@ -691,7 +682,7 @@ export type BattleCreateInput = {
   readonly army1?: Maybe<BattleInfoRelateToOneInput>;
   readonly army2?: Maybe<BattleInfoRelateToOneInput>;
   readonly points?: Maybe<Scalars['Int']>;
-  readonly mission?: Maybe<Scalars['String']>;
+  readonly mission?: Maybe<MissionRelateToOneInput>;
   readonly setupDescription?: Maybe<Scalars['String']>;
   readonly description?: Maybe<Scalars['String']>;
   readonly status?: Maybe<BattleStatusType>;
@@ -855,6 +846,13 @@ export type MissionForceSizeType =
   | 'strikeForce'
   | 'onslaught';
 
+export type ObjectiveOptionRelateToOneInput = {
+  readonly create?: Maybe<ObjectiveOptionCreateInput>;
+  readonly connect?: Maybe<ObjectiveOptionWhereUniqueInput>;
+  readonly disconnect?: Maybe<ObjectiveOptionWhereUniqueInput>;
+  readonly disconnectAll?: Maybe<Scalars['Boolean']>;
+};
+
 /**  A keystone list  */
 export type Mission = {
   readonly __typename: 'Mission';
@@ -869,34 +867,13 @@ export type Mission = {
   readonly id: Scalars['ID'];
   readonly name: Maybe<Scalars['String']>;
   readonly source: Maybe<Scalars['String']>;
+  readonly type: Maybe<Scalars['String']>;
+  readonly page: Maybe<Scalars['Int']>;
   readonly briefing: Maybe<Scalars['String']>;
   readonly forceSize: Maybe<MissionForceSizeType>;
   readonly rules: Maybe<Scalars['String']>;
-  readonly primary: Maybe<Objective>;
-  readonly secondaries: ReadonlyArray<Objective>;
-  readonly _secondariesMeta: Maybe<_QueryMeta>;
-};
-
-
-/**  A keystone list  */
-export type MissionsecondariesArgs = {
-  where: Maybe<ObjectiveWhereInput>;
-  search: Maybe<Scalars['String']>;
-  sortBy: Maybe<ReadonlyArray<SortObjectivesBy>>;
-  orderBy: Maybe<Scalars['String']>;
-  first: Maybe<Scalars['Int']>;
-  skip: Maybe<Scalars['Int']>;
-};
-
-
-/**  A keystone list  */
-export type Mission_secondariesMetaArgs = {
-  where: Maybe<ObjectiveWhereInput>;
-  search: Maybe<Scalars['String']>;
-  sortBy: Maybe<ReadonlyArray<SortObjectivesBy>>;
-  orderBy: Maybe<Scalars['String']>;
-  first: Maybe<Scalars['Int']>;
-  skip: Maybe<Scalars['Int']>;
+  readonly primary: Maybe<ObjectiveOption>;
+  readonly secondary: Maybe<ObjectiveOption>;
 };
 
 export type MissionWhereInput = {
@@ -946,6 +923,32 @@ export type MissionWhereInput = {
   readonly source_not_ends_with_i?: Maybe<Scalars['String']>;
   readonly source_in?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
   readonly source_not_in?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly type?: Maybe<Scalars['String']>;
+  readonly type_not?: Maybe<Scalars['String']>;
+  readonly type_contains?: Maybe<Scalars['String']>;
+  readonly type_not_contains?: Maybe<Scalars['String']>;
+  readonly type_starts_with?: Maybe<Scalars['String']>;
+  readonly type_not_starts_with?: Maybe<Scalars['String']>;
+  readonly type_ends_with?: Maybe<Scalars['String']>;
+  readonly type_not_ends_with?: Maybe<Scalars['String']>;
+  readonly type_i?: Maybe<Scalars['String']>;
+  readonly type_not_i?: Maybe<Scalars['String']>;
+  readonly type_contains_i?: Maybe<Scalars['String']>;
+  readonly type_not_contains_i?: Maybe<Scalars['String']>;
+  readonly type_starts_with_i?: Maybe<Scalars['String']>;
+  readonly type_not_starts_with_i?: Maybe<Scalars['String']>;
+  readonly type_ends_with_i?: Maybe<Scalars['String']>;
+  readonly type_not_ends_with_i?: Maybe<Scalars['String']>;
+  readonly type_in?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly type_not_in?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly page?: Maybe<Scalars['Int']>;
+  readonly page_not?: Maybe<Scalars['Int']>;
+  readonly page_lt?: Maybe<Scalars['Int']>;
+  readonly page_lte?: Maybe<Scalars['Int']>;
+  readonly page_gt?: Maybe<Scalars['Int']>;
+  readonly page_gte?: Maybe<Scalars['Int']>;
+  readonly page_in?: Maybe<ReadonlyArray<Maybe<Scalars['Int']>>>;
+  readonly page_not_in?: Maybe<ReadonlyArray<Maybe<Scalars['Int']>>>;
   readonly briefing?: Maybe<Scalars['String']>;
   readonly briefing_not?: Maybe<Scalars['String']>;
   readonly briefing_contains?: Maybe<Scalars['String']>;
@@ -986,14 +989,10 @@ export type MissionWhereInput = {
   readonly rules_not_ends_with_i?: Maybe<Scalars['String']>;
   readonly rules_in?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
   readonly rules_not_in?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
-  readonly primary?: Maybe<ObjectiveWhereInput>;
+  readonly primary?: Maybe<ObjectiveOptionWhereInput>;
   readonly primary_is_null?: Maybe<Scalars['Boolean']>;
-  /**  condition must be true for all nodes  */
-  readonly secondaries_every?: Maybe<ObjectiveWhereInput>;
-  /**  condition must be true for at least 1 node  */
-  readonly secondaries_some?: Maybe<ObjectiveWhereInput>;
-  /**  condition must be false for all nodes  */
-  readonly secondaries_none?: Maybe<ObjectiveWhereInput>;
+  readonly secondary?: Maybe<ObjectiveOptionWhereInput>;
+  readonly secondary_is_null?: Maybe<Scalars['Boolean']>;
 };
 
 export type MissionWhereUniqueInput = {
@@ -1007,6 +1006,10 @@ export type SortMissionsBy =
   | 'name_DESC'
   | 'source_ASC'
   | 'source_DESC'
+  | 'type_ASC'
+  | 'type_DESC'
+  | 'page_ASC'
+  | 'page_DESC'
   | 'briefing_ASC'
   | 'briefing_DESC'
   | 'forceSize_ASC'
@@ -1015,17 +1018,19 @@ export type SortMissionsBy =
   | 'rules_DESC'
   | 'primary_ASC'
   | 'primary_DESC'
-  | 'secondaries_ASC'
-  | 'secondaries_DESC';
+  | 'secondary_ASC'
+  | 'secondary_DESC';
 
 export type MissionUpdateInput = {
   readonly name?: Maybe<Scalars['String']>;
   readonly source?: Maybe<Scalars['String']>;
+  readonly type?: Maybe<Scalars['String']>;
+  readonly page?: Maybe<Scalars['Int']>;
   readonly briefing?: Maybe<Scalars['String']>;
   readonly forceSize?: Maybe<MissionForceSizeType>;
   readonly rules?: Maybe<Scalars['String']>;
-  readonly primary?: Maybe<ObjectiveRelateToOneInput>;
-  readonly secondaries?: Maybe<ObjectiveRelateToManyInput>;
+  readonly primary?: Maybe<ObjectiveOptionRelateToOneInput>;
+  readonly secondary?: Maybe<ObjectiveOptionRelateToOneInput>;
 };
 
 export type MissionsUpdateInput = {
@@ -1036,11 +1041,13 @@ export type MissionsUpdateInput = {
 export type MissionCreateInput = {
   readonly name?: Maybe<Scalars['String']>;
   readonly source?: Maybe<Scalars['String']>;
+  readonly type?: Maybe<Scalars['String']>;
+  readonly page?: Maybe<Scalars['Int']>;
   readonly briefing?: Maybe<Scalars['String']>;
   readonly forceSize?: Maybe<MissionForceSizeType>;
   readonly rules?: Maybe<Scalars['String']>;
-  readonly primary?: Maybe<ObjectiveRelateToOneInput>;
-  readonly secondaries?: Maybe<ObjectiveRelateToManyInput>;
+  readonly primary?: Maybe<ObjectiveOptionRelateToOneInput>;
+  readonly secondary?: Maybe<ObjectiveOptionRelateToOneInput>;
 };
 
 export type MissionsCreateInput = {
@@ -1061,7 +1068,7 @@ export type Objective = {
   readonly id: Scalars['ID'];
   readonly name: Maybe<Scalars['String']>;
   readonly score: Maybe<Scalars['Int']>;
-  readonly rules: Maybe<Scalars['String']>;
+  readonly selection: Maybe<ObjectiveOption>;
 };
 
 export type ObjectiveWhereInput = {
@@ -1101,6 +1108,110 @@ export type ObjectiveWhereInput = {
   readonly score_gte?: Maybe<Scalars['Int']>;
   readonly score_in?: Maybe<ReadonlyArray<Maybe<Scalars['Int']>>>;
   readonly score_not_in?: Maybe<ReadonlyArray<Maybe<Scalars['Int']>>>;
+  readonly selection?: Maybe<ObjectiveOptionWhereInput>;
+  readonly selection_is_null?: Maybe<Scalars['Boolean']>;
+};
+
+export type ObjectiveWhereUniqueInput = {
+  readonly id: Scalars['ID'];
+};
+
+export type SortObjectivesBy = 
+  | 'id_ASC'
+  | 'id_DESC'
+  | 'name_ASC'
+  | 'name_DESC'
+  | 'score_ASC'
+  | 'score_DESC'
+  | 'selection_ASC'
+  | 'selection_DESC';
+
+export type ObjectiveUpdateInput = {
+  readonly name?: Maybe<Scalars['String']>;
+  readonly score?: Maybe<Scalars['Int']>;
+  readonly selection?: Maybe<ObjectiveOptionRelateToOneInput>;
+};
+
+export type ObjectivesUpdateInput = {
+  readonly id: Scalars['ID'];
+  readonly data?: Maybe<ObjectiveUpdateInput>;
+};
+
+export type ObjectiveCreateInput = {
+  readonly name?: Maybe<Scalars['String']>;
+  readonly score?: Maybe<Scalars['Int']>;
+  readonly selection?: Maybe<ObjectiveOptionRelateToOneInput>;
+};
+
+export type ObjectivesCreateInput = {
+  readonly data?: Maybe<ObjectiveCreateInput>;
+};
+
+/**  A keystone list  */
+export type ObjectiveOption = {
+  readonly __typename: 'ObjectiveOption';
+  /**
+   * This virtual field will be resolved in one of the following ways (in this order):
+   *  1. Execution of 'labelResolver' set on the ObjectiveOption List config, or
+   *  2. As an alias to the field set on 'labelField' in the ObjectiveOption List config, or
+   *  3. As an alias to a 'name' field on the ObjectiveOption List (if one exists), or
+   *  4. As an alias to the 'id' field on the ObjectiveOption List.
+   */
+  readonly _label_: Maybe<Scalars['String']>;
+  readonly id: Scalars['ID'];
+  readonly name: Maybe<Scalars['String']>;
+  readonly category: Maybe<Scalars['String']>;
+  readonly rules: Maybe<Scalars['String']>;
+  readonly source: Maybe<Scalars['String']>;
+};
+
+export type ObjectiveOptionWhereInput = {
+  readonly AND?: Maybe<ReadonlyArray<Maybe<ObjectiveOptionWhereInput>>>;
+  readonly OR?: Maybe<ReadonlyArray<Maybe<ObjectiveOptionWhereInput>>>;
+  readonly id?: Maybe<Scalars['ID']>;
+  readonly id_not?: Maybe<Scalars['ID']>;
+  readonly id_lt?: Maybe<Scalars['ID']>;
+  readonly id_lte?: Maybe<Scalars['ID']>;
+  readonly id_gt?: Maybe<Scalars['ID']>;
+  readonly id_gte?: Maybe<Scalars['ID']>;
+  readonly id_in?: Maybe<ReadonlyArray<Maybe<Scalars['ID']>>>;
+  readonly id_not_in?: Maybe<ReadonlyArray<Maybe<Scalars['ID']>>>;
+  readonly name?: Maybe<Scalars['String']>;
+  readonly name_not?: Maybe<Scalars['String']>;
+  readonly name_contains?: Maybe<Scalars['String']>;
+  readonly name_not_contains?: Maybe<Scalars['String']>;
+  readonly name_starts_with?: Maybe<Scalars['String']>;
+  readonly name_not_starts_with?: Maybe<Scalars['String']>;
+  readonly name_ends_with?: Maybe<Scalars['String']>;
+  readonly name_not_ends_with?: Maybe<Scalars['String']>;
+  readonly name_i?: Maybe<Scalars['String']>;
+  readonly name_not_i?: Maybe<Scalars['String']>;
+  readonly name_contains_i?: Maybe<Scalars['String']>;
+  readonly name_not_contains_i?: Maybe<Scalars['String']>;
+  readonly name_starts_with_i?: Maybe<Scalars['String']>;
+  readonly name_not_starts_with_i?: Maybe<Scalars['String']>;
+  readonly name_ends_with_i?: Maybe<Scalars['String']>;
+  readonly name_not_ends_with_i?: Maybe<Scalars['String']>;
+  readonly name_in?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly name_not_in?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly category?: Maybe<Scalars['String']>;
+  readonly category_not?: Maybe<Scalars['String']>;
+  readonly category_contains?: Maybe<Scalars['String']>;
+  readonly category_not_contains?: Maybe<Scalars['String']>;
+  readonly category_starts_with?: Maybe<Scalars['String']>;
+  readonly category_not_starts_with?: Maybe<Scalars['String']>;
+  readonly category_ends_with?: Maybe<Scalars['String']>;
+  readonly category_not_ends_with?: Maybe<Scalars['String']>;
+  readonly category_i?: Maybe<Scalars['String']>;
+  readonly category_not_i?: Maybe<Scalars['String']>;
+  readonly category_contains_i?: Maybe<Scalars['String']>;
+  readonly category_not_contains_i?: Maybe<Scalars['String']>;
+  readonly category_starts_with_i?: Maybe<Scalars['String']>;
+  readonly category_not_starts_with_i?: Maybe<Scalars['String']>;
+  readonly category_ends_with_i?: Maybe<Scalars['String']>;
+  readonly category_not_ends_with_i?: Maybe<Scalars['String']>;
+  readonly category_in?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly category_not_in?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
   readonly rules?: Maybe<Scalars['String']>;
   readonly rules_not?: Maybe<Scalars['String']>;
   readonly rules_contains?: Maybe<Scalars['String']>;
@@ -1119,41 +1230,63 @@ export type ObjectiveWhereInput = {
   readonly rules_not_ends_with_i?: Maybe<Scalars['String']>;
   readonly rules_in?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
   readonly rules_not_in?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly source?: Maybe<Scalars['String']>;
+  readonly source_not?: Maybe<Scalars['String']>;
+  readonly source_contains?: Maybe<Scalars['String']>;
+  readonly source_not_contains?: Maybe<Scalars['String']>;
+  readonly source_starts_with?: Maybe<Scalars['String']>;
+  readonly source_not_starts_with?: Maybe<Scalars['String']>;
+  readonly source_ends_with?: Maybe<Scalars['String']>;
+  readonly source_not_ends_with?: Maybe<Scalars['String']>;
+  readonly source_i?: Maybe<Scalars['String']>;
+  readonly source_not_i?: Maybe<Scalars['String']>;
+  readonly source_contains_i?: Maybe<Scalars['String']>;
+  readonly source_not_contains_i?: Maybe<Scalars['String']>;
+  readonly source_starts_with_i?: Maybe<Scalars['String']>;
+  readonly source_not_starts_with_i?: Maybe<Scalars['String']>;
+  readonly source_ends_with_i?: Maybe<Scalars['String']>;
+  readonly source_not_ends_with_i?: Maybe<Scalars['String']>;
+  readonly source_in?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
+  readonly source_not_in?: Maybe<ReadonlyArray<Maybe<Scalars['String']>>>;
 };
 
-export type ObjectiveWhereUniqueInput = {
+export type ObjectiveOptionWhereUniqueInput = {
   readonly id: Scalars['ID'];
 };
 
-export type SortObjectivesBy = 
+export type SortObjectiveOptionsBy = 
   | 'id_ASC'
   | 'id_DESC'
   | 'name_ASC'
   | 'name_DESC'
-  | 'score_ASC'
-  | 'score_DESC'
+  | 'category_ASC'
+  | 'category_DESC'
   | 'rules_ASC'
-  | 'rules_DESC';
+  | 'rules_DESC'
+  | 'source_ASC'
+  | 'source_DESC';
 
-export type ObjectiveUpdateInput = {
+export type ObjectiveOptionUpdateInput = {
   readonly name?: Maybe<Scalars['String']>;
-  readonly score?: Maybe<Scalars['Int']>;
+  readonly category?: Maybe<Scalars['String']>;
   readonly rules?: Maybe<Scalars['String']>;
+  readonly source?: Maybe<Scalars['String']>;
 };
 
-export type ObjectivesUpdateInput = {
+export type ObjectiveOptionsUpdateInput = {
   readonly id: Scalars['ID'];
-  readonly data?: Maybe<ObjectiveUpdateInput>;
+  readonly data?: Maybe<ObjectiveOptionUpdateInput>;
 };
 
-export type ObjectiveCreateInput = {
+export type ObjectiveOptionCreateInput = {
   readonly name?: Maybe<Scalars['String']>;
-  readonly score?: Maybe<Scalars['Int']>;
+  readonly category?: Maybe<Scalars['String']>;
   readonly rules?: Maybe<Scalars['String']>;
+  readonly source?: Maybe<Scalars['String']>;
 };
 
-export type ObjectivesCreateInput = {
-  readonly data?: Maybe<ObjectiveCreateInput>;
+export type ObjectiveOptionsCreateInput = {
+  readonly data?: Maybe<ObjectiveOptionCreateInput>;
 };
 
 export type BattlefieldRelateToManyInput = {
@@ -1629,6 +1762,14 @@ export type Query = {
   readonly _allObjectivesMeta: Maybe<_QueryMeta>;
   /**  Retrieve the meta-data for the Objective list.  */
   readonly _ObjectivesMeta: Maybe<_ListMeta>;
+  /**  Search for all ObjectiveOption items which match the where clause.  */
+  readonly allObjectiveOptions: Maybe<ReadonlyArray<Maybe<ObjectiveOption>>>;
+  /**  Search for the ObjectiveOption item with the matching ID.  */
+  readonly ObjectiveOption: Maybe<ObjectiveOption>;
+  /**  Perform a meta-query on all ObjectiveOption items which match the where clause.  */
+  readonly _allObjectiveOptionsMeta: Maybe<_QueryMeta>;
+  /**  Retrieve the meta-data for the ObjectiveOption list.  */
+  readonly _ObjectiveOptionsMeta: Maybe<_ListMeta>;
   /**  Search for all Planet items which match the where clause.  */
   readonly allPlanets: Maybe<ReadonlyArray<Maybe<Planet>>>;
   /**  Search for the Planet item with the matching ID.  */
@@ -1828,6 +1969,31 @@ export type Query_allObjectivesMetaArgs = {
 };
 
 
+export type QueryallObjectiveOptionsArgs = {
+  where: Maybe<ObjectiveOptionWhereInput>;
+  search: Maybe<Scalars['String']>;
+  sortBy: Maybe<ReadonlyArray<SortObjectiveOptionsBy>>;
+  orderBy: Maybe<Scalars['String']>;
+  first: Maybe<Scalars['Int']>;
+  skip: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryObjectiveOptionArgs = {
+  where: ObjectiveOptionWhereUniqueInput;
+};
+
+
+export type Query_allObjectiveOptionsMetaArgs = {
+  where: Maybe<ObjectiveOptionWhereInput>;
+  search: Maybe<Scalars['String']>;
+  sortBy: Maybe<ReadonlyArray<SortObjectiveOptionsBy>>;
+  orderBy: Maybe<Scalars['String']>;
+  first: Maybe<Scalars['Int']>;
+  skip: Maybe<Scalars['Int']>;
+};
+
+
 export type QueryallPlanetsArgs = {
   where: Maybe<PlanetWhereInput>;
   search: Maybe<Scalars['String']>;
@@ -1968,6 +2134,18 @@ export type Mutation = {
   readonly deleteObjective: Maybe<Objective>;
   /**  Delete multiple Objective items by ID.  */
   readonly deleteObjectives: Maybe<ReadonlyArray<Maybe<Objective>>>;
+  /**  Create a single ObjectiveOption item.  */
+  readonly createObjectiveOption: Maybe<ObjectiveOption>;
+  /**  Create multiple ObjectiveOption items.  */
+  readonly createObjectiveOptions: Maybe<ReadonlyArray<Maybe<ObjectiveOption>>>;
+  /**  Update a single ObjectiveOption item by ID.  */
+  readonly updateObjectiveOption: Maybe<ObjectiveOption>;
+  /**  Update multiple ObjectiveOption items by ID.  */
+  readonly updateObjectiveOptions: Maybe<ReadonlyArray<Maybe<ObjectiveOption>>>;
+  /**  Delete a single ObjectiveOption item by ID.  */
+  readonly deleteObjectiveOption: Maybe<ObjectiveOption>;
+  /**  Delete multiple ObjectiveOption items by ID.  */
+  readonly deleteObjectiveOptions: Maybe<ReadonlyArray<Maybe<ObjectiveOption>>>;
   /**  Create a single Planet item.  */
   readonly createPlanet: Maybe<Planet>;
   /**  Create multiple Planet items.  */
@@ -2212,6 +2390,37 @@ export type MutationdeleteObjectiveArgs = {
 
 
 export type MutationdeleteObjectivesArgs = {
+  ids: Maybe<ReadonlyArray<Scalars['ID']>>;
+};
+
+
+export type MutationcreateObjectiveOptionArgs = {
+  data: Maybe<ObjectiveOptionCreateInput>;
+};
+
+
+export type MutationcreateObjectiveOptionsArgs = {
+  data: Maybe<ReadonlyArray<Maybe<ObjectiveOptionsCreateInput>>>;
+};
+
+
+export type MutationupdateObjectiveOptionArgs = {
+  id: Scalars['ID'];
+  data: Maybe<ObjectiveOptionUpdateInput>;
+};
+
+
+export type MutationupdateObjectiveOptionsArgs = {
+  data: Maybe<ReadonlyArray<Maybe<ObjectiveOptionsUpdateInput>>>;
+};
+
+
+export type MutationdeleteObjectiveOptionArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationdeleteObjectiveOptionsArgs = {
   ids: Maybe<ReadonlyArray<Scalars['ID']>>;
 };
 

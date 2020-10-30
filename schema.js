@@ -81,7 +81,7 @@ module.exports.Battle = {
     army2: { type: Relationship, ref: "BattleInfo" },
     points: { type: Integer },
     // mission: { type: Relationship, ref: "Mission" },
-    mission: { type: Text },
+    mission: { type: Relationship, ref: "Mission" },
     // primary: { type: Text },
     setupDescription: { type: Markdown },
     description: { type: Markdown },
@@ -106,16 +106,30 @@ module.exports.Mission = {
   fields: {
     name: { type: Text },
     source: { type: Text },
+    type: { type: Text },
+    page: { type: Integer },
     briefing: { type: Markdown },
     forceSize: {
       type: Select,
-      options: objectToOptions(missionTypes),
+      options: Object.entries(missionTypes).map(([value, { label }]) => ({
+        value,
+        label,
+      })),
     },
     rules: { type: Markdown },
-    primary: { type: Relationship, ref: "Objective" },
-    secondaries: { type: Relationship, ref: "Objective", many: true },
+    primary: { type: Relationship, ref: "ObjectiveOption" },
+    secondary: { type: Relationship, ref: "ObjectiveOption" },
     // TODO: I would love to get scans of the maps in here
     // battleLayout: { type: Image },
+  },
+};
+
+module.exports.ObjectiveOption = {
+  fields: {
+    name: { type: Text },
+    category: { type: Text },
+    rules: { type: Markdown },
+    source: { type: Text },
   },
 };
 
@@ -123,7 +137,7 @@ module.exports.Objective = {
   fields: {
     name: { type: Text },
     score: { type: Integer },
-    rules: { type: Markdown },
+    selection: { type: Relationship, ref: "ObjectiveOption" },
   },
 };
 

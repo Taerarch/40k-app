@@ -471,6 +471,13 @@ input BattleInfoRelateToOneInput {
   disconnectAll: Boolean
 }
 
+input MissionRelateToOneInput {
+  create: MissionCreateInput
+  connect: MissionWhereUniqueInput
+  disconnect: MissionWhereUniqueInput
+  disconnectAll: Boolean
+}
+
 enum BattleStatusType {
   planning
   inProgress
@@ -491,7 +498,7 @@ type Battle {
   army1: BattleInfo
   army2: BattleInfo
   points: Int
-  mission: String
+  mission: Mission
   setupDescription: String
   description: String
   status: BattleStatusType
@@ -520,24 +527,8 @@ input BattleWhereInput {
   points_gte: Int
   points_in: [Int]
   points_not_in: [Int]
-  mission: String
-  mission_not: String
-  mission_contains: String
-  mission_not_contains: String
-  mission_starts_with: String
-  mission_not_starts_with: String
-  mission_ends_with: String
-  mission_not_ends_with: String
-  mission_i: String
-  mission_not_i: String
-  mission_contains_i: String
-  mission_not_contains_i: String
-  mission_starts_with_i: String
-  mission_not_starts_with_i: String
-  mission_ends_with_i: String
-  mission_not_ends_with_i: String
-  mission_in: [String]
-  mission_not_in: [String]
+  mission: MissionWhereInput
+  mission_is_null: Boolean
   setupDescription: String
   setupDescription_not: String
   setupDescription_contains: String
@@ -607,7 +598,7 @@ input BattleUpdateInput {
   army1: BattleInfoRelateToOneInput
   army2: BattleInfoRelateToOneInput
   points: Int
-  mission: String
+  mission: MissionRelateToOneInput
   setupDescription: String
   description: String
   status: BattleStatusType
@@ -622,7 +613,7 @@ input BattleCreateInput {
   army1: BattleInfoRelateToOneInput
   army2: BattleInfoRelateToOneInput
   points: Int
-  mission: String
+  mission: MissionRelateToOneInput
   setupDescription: String
   description: String
   status: BattleStatusType
@@ -765,6 +756,13 @@ enum MissionForceSizeType {
   onslaught
 }
 
+input ObjectiveOptionRelateToOneInput {
+  create: ObjectiveOptionCreateInput
+  connect: ObjectiveOptionWhereUniqueInput
+  disconnect: ObjectiveOptionWhereUniqueInput
+  disconnectAll: Boolean
+}
+
 """ A keystone list """
 type Mission {
   """
@@ -778,12 +776,13 @@ type Mission {
   id: ID!
   name: String
   source: String
+  type: String
+  page: Int
   briefing: String
   forceSize: MissionForceSizeType
   rules: String
-  primary: Objective
-  secondaries(where: ObjectiveWhereInput, search: String, sortBy: [SortObjectivesBy!], orderBy: String, first: Int, skip: Int): [Objective!]!
-  _secondariesMeta(where: ObjectiveWhereInput, search: String, sortBy: [SortObjectivesBy!], orderBy: String, first: Int, skip: Int): _QueryMeta
+  primary: ObjectiveOption
+  secondary: ObjectiveOption
 }
 
 input MissionWhereInput {
@@ -833,6 +832,32 @@ input MissionWhereInput {
   source_not_ends_with_i: String
   source_in: [String]
   source_not_in: [String]
+  type: String
+  type_not: String
+  type_contains: String
+  type_not_contains: String
+  type_starts_with: String
+  type_not_starts_with: String
+  type_ends_with: String
+  type_not_ends_with: String
+  type_i: String
+  type_not_i: String
+  type_contains_i: String
+  type_not_contains_i: String
+  type_starts_with_i: String
+  type_not_starts_with_i: String
+  type_ends_with_i: String
+  type_not_ends_with_i: String
+  type_in: [String]
+  type_not_in: [String]
+  page: Int
+  page_not: Int
+  page_lt: Int
+  page_lte: Int
+  page_gt: Int
+  page_gte: Int
+  page_in: [Int]
+  page_not_in: [Int]
   briefing: String
   briefing_not: String
   briefing_contains: String
@@ -873,14 +898,10 @@ input MissionWhereInput {
   rules_not_ends_with_i: String
   rules_in: [String]
   rules_not_in: [String]
-  primary: ObjectiveWhereInput
+  primary: ObjectiveOptionWhereInput
   primary_is_null: Boolean
-  """ condition must be true for all nodes """
-  secondaries_every: ObjectiveWhereInput
-  """ condition must be true for at least 1 node """
-  secondaries_some: ObjectiveWhereInput
-  """ condition must be false for all nodes """
-  secondaries_none: ObjectiveWhereInput
+  secondary: ObjectiveOptionWhereInput
+  secondary_is_null: Boolean
 }
 
 input MissionWhereUniqueInput {
@@ -894,6 +915,10 @@ enum SortMissionsBy {
   name_DESC
   source_ASC
   source_DESC
+  type_ASC
+  type_DESC
+  page_ASC
+  page_DESC
   briefing_ASC
   briefing_DESC
   forceSize_ASC
@@ -902,18 +927,20 @@ enum SortMissionsBy {
   rules_DESC
   primary_ASC
   primary_DESC
-  secondaries_ASC
-  secondaries_DESC
+  secondary_ASC
+  secondary_DESC
 }
 
 input MissionUpdateInput {
   name: String
   source: String
+  type: String
+  page: Int
   briefing: String
   forceSize: MissionForceSizeType
   rules: String
-  primary: ObjectiveRelateToOneInput
-  secondaries: ObjectiveRelateToManyInput
+  primary: ObjectiveOptionRelateToOneInput
+  secondary: ObjectiveOptionRelateToOneInput
 }
 
 input MissionsUpdateInput {
@@ -924,11 +951,13 @@ input MissionsUpdateInput {
 input MissionCreateInput {
   name: String
   source: String
+  type: String
+  page: Int
   briefing: String
   forceSize: MissionForceSizeType
   rules: String
-  primary: ObjectiveRelateToOneInput
-  secondaries: ObjectiveRelateToManyInput
+  primary: ObjectiveOptionRelateToOneInput
+  secondary: ObjectiveOptionRelateToOneInput
 }
 
 input MissionsCreateInput {
@@ -948,7 +977,7 @@ type Objective {
   id: ID!
   name: String
   score: Int
-  rules: String
+  selection: ObjectiveOption
 }
 
 input ObjectiveWhereInput {
@@ -988,6 +1017,110 @@ input ObjectiveWhereInput {
   score_gte: Int
   score_in: [Int]
   score_not_in: [Int]
+  selection: ObjectiveOptionWhereInput
+  selection_is_null: Boolean
+}
+
+input ObjectiveWhereUniqueInput {
+  id: ID!
+}
+
+enum SortObjectivesBy {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  score_ASC
+  score_DESC
+  selection_ASC
+  selection_DESC
+}
+
+input ObjectiveUpdateInput {
+  name: String
+  score: Int
+  selection: ObjectiveOptionRelateToOneInput
+}
+
+input ObjectivesUpdateInput {
+  id: ID!
+  data: ObjectiveUpdateInput
+}
+
+input ObjectiveCreateInput {
+  name: String
+  score: Int
+  selection: ObjectiveOptionRelateToOneInput
+}
+
+input ObjectivesCreateInput {
+  data: ObjectiveCreateInput
+}
+
+""" A keystone list """
+type ObjectiveOption {
+  """
+  This virtual field will be resolved in one of the following ways (in this order):
+   1. Execution of 'labelResolver' set on the ObjectiveOption List config, or
+   2. As an alias to the field set on 'labelField' in the ObjectiveOption List config, or
+   3. As an alias to a 'name' field on the ObjectiveOption List (if one exists), or
+   4. As an alias to the 'id' field on the ObjectiveOption List.
+  """
+  _label_: String
+  id: ID!
+  name: String
+  category: String
+  rules: String
+  source: String
+}
+
+input ObjectiveOptionWhereInput {
+  AND: [ObjectiveOptionWhereInput]
+  OR: [ObjectiveOptionWhereInput]
+  id: ID
+  id_not: ID
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID]
+  id_not_in: [ID]
+  name: String
+  name_not: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  name_i: String
+  name_not_i: String
+  name_contains_i: String
+  name_not_contains_i: String
+  name_starts_with_i: String
+  name_not_starts_with_i: String
+  name_ends_with_i: String
+  name_not_ends_with_i: String
+  name_in: [String]
+  name_not_in: [String]
+  category: String
+  category_not: String
+  category_contains: String
+  category_not_contains: String
+  category_starts_with: String
+  category_not_starts_with: String
+  category_ends_with: String
+  category_not_ends_with: String
+  category_i: String
+  category_not_i: String
+  category_contains_i: String
+  category_not_contains_i: String
+  category_starts_with_i: String
+  category_not_starts_with_i: String
+  category_ends_with_i: String
+  category_not_ends_with_i: String
+  category_in: [String]
+  category_not_in: [String]
   rules: String
   rules_not: String
   rules_contains: String
@@ -1006,42 +1139,64 @@ input ObjectiveWhereInput {
   rules_not_ends_with_i: String
   rules_in: [String]
   rules_not_in: [String]
+  source: String
+  source_not: String
+  source_contains: String
+  source_not_contains: String
+  source_starts_with: String
+  source_not_starts_with: String
+  source_ends_with: String
+  source_not_ends_with: String
+  source_i: String
+  source_not_i: String
+  source_contains_i: String
+  source_not_contains_i: String
+  source_starts_with_i: String
+  source_not_starts_with_i: String
+  source_ends_with_i: String
+  source_not_ends_with_i: String
+  source_in: [String]
+  source_not_in: [String]
 }
 
-input ObjectiveWhereUniqueInput {
+input ObjectiveOptionWhereUniqueInput {
   id: ID!
 }
 
-enum SortObjectivesBy {
+enum SortObjectiveOptionsBy {
   id_ASC
   id_DESC
   name_ASC
   name_DESC
-  score_ASC
-  score_DESC
+  category_ASC
+  category_DESC
   rules_ASC
   rules_DESC
+  source_ASC
+  source_DESC
 }
 
-input ObjectiveUpdateInput {
+input ObjectiveOptionUpdateInput {
   name: String
-  score: Int
+  category: String
   rules: String
+  source: String
 }
 
-input ObjectivesUpdateInput {
+input ObjectiveOptionsUpdateInput {
   id: ID!
-  data: ObjectiveUpdateInput
+  data: ObjectiveOptionUpdateInput
 }
 
-input ObjectiveCreateInput {
+input ObjectiveOptionCreateInput {
   name: String
-  score: Int
+  category: String
   rules: String
+  source: String
 }
 
-input ObjectivesCreateInput {
-  data: ObjectiveCreateInput
+input ObjectiveOptionsCreateInput {
+  data: ObjectiveOptionCreateInput
 }
 
 input BattlefieldRelateToManyInput {
@@ -1456,6 +1611,14 @@ type Query {
   _allObjectivesMeta(where: ObjectiveWhereInput, search: String, sortBy: [SortObjectivesBy!], orderBy: String, first: Int, skip: Int): _QueryMeta
   """ Retrieve the meta-data for the Objective list. """
   _ObjectivesMeta: _ListMeta
+  """ Search for all ObjectiveOption items which match the where clause. """
+  allObjectiveOptions(where: ObjectiveOptionWhereInput, search: String, sortBy: [SortObjectiveOptionsBy!], orderBy: String, first: Int, skip: Int): [ObjectiveOption]
+  """ Search for the ObjectiveOption item with the matching ID. """
+  ObjectiveOption(where: ObjectiveOptionWhereUniqueInput!): ObjectiveOption
+  """ Perform a meta-query on all ObjectiveOption items which match the where clause. """
+  _allObjectiveOptionsMeta(where: ObjectiveOptionWhereInput, search: String, sortBy: [SortObjectiveOptionsBy!], orderBy: String, first: Int, skip: Int): _QueryMeta
+  """ Retrieve the meta-data for the ObjectiveOption list. """
+  _ObjectiveOptionsMeta: _ListMeta
   """ Search for all Planet items which match the where clause. """
   allPlanets(where: PlanetWhereInput, search: String, sortBy: [SortPlanetsBy!], orderBy: String, first: Int, skip: Int): [Planet]
   """ Search for the Planet item with the matching ID. """
@@ -1564,6 +1727,18 @@ type Mutation {
   deleteObjective(id: ID!): Objective
   """ Delete multiple Objective items by ID. """
   deleteObjectives(ids: [ID!]): [Objective]
+  """ Create a single ObjectiveOption item. """
+  createObjectiveOption(data: ObjectiveOptionCreateInput): ObjectiveOption
+  """ Create multiple ObjectiveOption items. """
+  createObjectiveOptions(data: [ObjectiveOptionsCreateInput]): [ObjectiveOption]
+  """ Update a single ObjectiveOption item by ID. """
+  updateObjectiveOption(id: ID!, data: ObjectiveOptionUpdateInput): ObjectiveOption
+  """ Update multiple ObjectiveOption items by ID. """
+  updateObjectiveOptions(data: [ObjectiveOptionsUpdateInput]): [ObjectiveOption]
+  """ Delete a single ObjectiveOption item by ID. """
+  deleteObjectiveOption(id: ID!): ObjectiveOption
+  """ Delete multiple ObjectiveOption items by ID. """
+  deleteObjectiveOptions(ids: [ID!]): [ObjectiveOption]
   """ Create a single Planet item. """
   createPlanet(data: PlanetCreateInput): Planet
   """ Create multiple Planet items. """

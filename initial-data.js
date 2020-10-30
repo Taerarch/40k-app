@@ -1,5 +1,6 @@
 const { createItems } = require("@keystonejs/server-side-graphql-client");
 const fs = require("fs");
+const { missions, objectives } = require("./constants");
 
 const initialData = {
   User: [
@@ -86,6 +87,7 @@ const initialData = {
       },
     },
   ],
+  ObjectiveOption: objectives,
 };
 
 async function createInitialData(keystone) {
@@ -95,15 +97,39 @@ async function createInitialData(keystone) {
 
   let newItems = Object.entries(initialData);
 
-  await Promise.all(
+  let things = await Promise.all(
     newItems.map(([listKey, listData]) =>
       createItems({
         keystone,
         listKey,
         items: listData.map((x) => ({ data: x })),
+        returnFields: "id, name",
       })
     )
   );
+
+  // currently true but could do with hardening
+  let objectiveOptions = things[1];
+
+  await createItems({
+    keystone,
+    listKey: "Mission",
+    items: missions.map(({ primary, secondary, ...rest }) => ({
+      data: {
+        ...rest,
+        primary: {
+          connect: {
+            id: objectiveOptions.find(({ name }) => name === primary).id,
+          },
+        },
+        secondary: {
+          connect: {
+            id: objectiveOptions.find(({ name }) => name === secondary).id,
+          },
+        },
+      },
+    })),
+  });
 }
 
 module.exports = createInitialData;

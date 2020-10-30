@@ -2,62 +2,60 @@
 import { jsx } from "@emotion/core";
 import { useMutation, useQuery } from "@ts-gql/apollo";
 import { gql } from "@ts-gql/tag";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Select from "react-select";
 import { useRouter } from "next/router";
+import { missionTypes } from "../../../constants";
 
-const GET_ARMIES = gql`
-  query getArmies {
-    allArmies {
-      id
-      name
-      faction
-      owner {
-        id
-        name
-      }
-    }
+const missionTypesArray = Object.entries(missionTypes)
+  .map(([key, rest]) => ({
+    key,
+    ...rest,
+  }))
+  .sort((a, b) => (a.maxPoints < b.maxPoints ? 1 : 0));
+
+const getMissionSize = (points): typeof missionTypesArray[0] => {
+  let bestMission;
+
+  for (let mission of missionTypesArray) {
+    if (mission.maxPoints >= points) bestMission = mission;
   }
-` as import("../../../__generated__/ts-gql/getArmies").type;
+
+  if (!bestMission) {
+    bestMission = missionTypesArray.find(({ key }) => key === "onslaught");
+  }
+  return bestMission;
+};
 
 const CREATE_BATTLE = gql`
   mutation createABattle(
     $points: Int!
     $description: String!
-    $mission: String
+    $missionID: ID!
     $army1ID: ID!
     $army2ID: ID!
+    $startingCP: Int!
   ) {
     createBattle(
       data: {
         points: $points
         description: $description
-        mission: $mission
+        mission: { connect: { id: $missionID } }
         status: planning
         army1: {
           create: {
             army: { connect: { id: $army1ID } }
             primary: { create: { name: "Primary", score: 0 } }
-            secondaries: {
-              create: [
-                { name: "", score: 0 }
-                { name: "", score: 0 }
-                { name: "", score: 0 }
-              ]
-            }
+            CP: $startingCP
+            secondaries: { create: [{ score: 0 }, { score: 0 }, { score: 0 }] }
           }
         }
         army2: {
           create: {
             army: { connect: { id: $army2ID } }
             primary: { create: { name: "Primary", score: 0 } }
-            secondaries: {
-              create: [
-                { name: "", score: 0 }
-                { name: "", score: 0 }
-                { name: "", score: 0 }
-              ]
-            }
+            CP: $startingCP
+            secondaries: { create: [{ score: 0 }, { score: 0 }, { score: 0 }] }
           }
         }
       }
@@ -79,17 +77,52 @@ const ArmySelect = ({ allArmies, onChange }) => (
   />
 );
 
+const GET_INITIAL_DATA = gql`
+  query getCreateInitialData {
+    allMissions {
+      id
+      name
+      forceSize
+    }
+    allArmies {
+      id
+      name
+      faction
+      owner {
+        id
+        name
+      }
+    }
+  }
+` as import("../../../__generated__/ts-gql/getCreateInitialData").type;
+
 const Create = () => {
+  const { data } = useQuery(GET_INITIAL_DATA);
+
   // TODO: make this form accessible instead of these hacks
   const [army1, setArmy1] = useState();
   const [army2, setArmy2] = useState();
   const [points, setPoints] = useState(2000);
-  const [mission, setMission] = useState("No Man's Land");
+  const [missionID, setMissionID] = useState();
   const [description, setDescription] = useState("");
   const { push } = useRouter();
 
-  const { data } = useQuery(GET_ARMIES);
+  let missionSize = useMemo(() => getMissionSize(points), [points]);
+
   const [createABattle, { data: createData }] = useMutation(CREATE_BATTLE);
+
+  const missions = useMemo(
+    () =>
+      data?.allMissions
+        ?.filter(({ forceSize }) => forceSize === missionSize.key, [
+          missionSize.key,
+        ])
+        .map(({ name, id }) => ({
+          value: id,
+          label: name,
+        })),
+    [missionSize.key, data?.allMissions]
+  );
 
   if (!data) return "loading";
   const { allArmies } = data;
@@ -102,7 +135,7 @@ const Create = () => {
     army1 &&
     army2 &&
     points &&
-    mission &&
+    missionID &&
     army1 !== army2
   );
   return (
@@ -123,16 +156,16 @@ const Create = () => {
           </div>
           <div>
             <h2>Name of the Mission</h2>
-            <input
-              type="text"
-              value={mission}
-              onChange={({ target }) => setMission(target.value)}
+            <Select
+              options={missions}
+              onChange={(item, { action }) =>
+                action === "select-option" && setMissionID(item.value)
+              }
             />
           </div>
           <div>
             <h2>Describe the scenario (flavor stuff)</h2>
-            <input
-              type="text"
+            <textarea
               value={description}
               onChange={({ target }) => setDescription(target.value)}
             />
@@ -152,8 +185,9 @@ const Create = () => {
                     army1ID: allArmies.find(({ name }) => name === army1).id,
                     army2ID: allArmies.find(({ name }) => name === army2).id,
                     points,
-                    mission,
+                    missionID,
                     description,
+                    startingCP: missionSize.startingCP,
                   },
                 });
               }}

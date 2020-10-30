@@ -2,3 +2,4 @@ node_modules
 .next
 wh40k
 .DS_Store
+secret-data.js

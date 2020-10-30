@@ -2,9 +2,10 @@
 import { jsx } from "@emotion/core";
 import { useMutation, useQuery } from "@ts-gql/apollo";
 import { gql, FragmentData } from "@ts-gql/tag";
+import Select from "react-select";
 
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "../../components/Button";
 
 const fragment = gql`
@@ -13,13 +14,20 @@ const fragment = gql`
     CP
     notes
     primary {
+      selection {
+        id
+        name
+      }
       id
-      name
       score
     }
     secondaries {
       id
-      name
+      selection {
+        id
+        name
+        category
+      }
       score
     }
     army {
@@ -34,7 +42,7 @@ const fragment = gql`
   }
 ` as import("../../../__generated__/ts-gql/Army_info").type;
 
-const UPDATE_OBJECTIVE = gql`
+const UPDATE_OBJECTIVE_SCORE = gql`
   mutation updateObjective($id: ID!, $score: Int!) {
     updateObjective(id: $id, data: { score: $score }) {
       id
@@ -66,26 +74,7 @@ const AUTHED_USER = gql`
   }
 ` as import("../../../__generated__/ts-gql/getAuthedUser").type;
 const UPDATE_INFO = gql`
-  mutation preBattleUpdateInfo(
-    $s1: String!
-    $s1ID: ID!
-    $s2: String!
-    $s2ID: ID!
-    $s3: String!
-    $s3ID: ID!
-    $armyInfoID: ID!
-    $notes: String!
-  ) {
-    updateObjectives(
-      data: [
-        { id: $s1ID, data: { name: $s1 } }
-        { id: $s2ID, data: { name: $s2 } }
-        { id: $s3ID, data: { name: $s3 } }
-      ]
-    ) {
-      id
-      name
-    }
+  mutation preBattleUpdateInfo($armyInfoID: ID!, $notes: String!) {
     updateBattleInfo(id: $armyInfoID, data: { notes: $notes }) {
       id
       notes
@@ -146,7 +135,7 @@ const Board = ({
   army,
   CP,
 }: BoardProps) => {
-  const [updateObjective] = useMutation(UPDATE_OBJECTIVE);
+  const [updateObjective] = useMutation(UPDATE_OBJECTIVE_SCORE);
 
   return (
     <div css={{ maxWidth: 200, display: "inline-block" }}>
@@ -154,6 +143,7 @@ const Board = ({
       <ul css={{ padding: 0 }}>
         <Imp
           {...primary}
+          name={primary.selection.name}
           max={45}
           onChange={({ target }) =>
             updateObjective({
@@ -165,7 +155,8 @@ const Board = ({
         {secondaries.map((secondary) => (
           <Imp
             {...secondary}
-            key={secondary.name}
+            name={secondary.selection.name}
+            key={secondary.selection.name}
             onChange={({ target }) =>
               updateObjective({
                 variables: { id: secondary.id, score: parseInt(target.value) },
@@ -190,47 +181,118 @@ const Board = ({
   );
 };
 
-const PickSecondary = ({ num, onChange, name }) => (
-  <>
-    <h2>Pick Secondary {num + 1}</h2>
-    <input type="text" value={name || ""} onChange={onChange} />
-  </>
-);
-
 type PlayerViewProps = typeof GET_BATTLE.___type.result.Battle & {
   userId: String;
   refetch: Function;
   startPolling: Function;
 };
 
-const PlayerPlanning = ({ cantMoveFromBattle, army, id, refetch }) => {
-  // we assume if there is no army, that means that there
+const GET_AVAILABLE_SECONDARIES = gql`
+  query getAvailableSecondaries($missionID: ID!) {
+    allObjectiveOptions(where: { category_not: "missionSecondary" }) {
+      id
+      name
+      category
+    }
+    Mission(where: { id: $missionID }) {
+      id
+      secondary {
+        id
+        name
+        category
+      }
+    }
+  }
+` as import("../../../__generated__/ts-gql/getAvailableSecondaries").type;
+
+const UPDATE_AN_OBJECTIVE = gql`
+  mutation updateAnObjective($objID: ID!, $rulesID: ID!) {
+    updateObjective(
+      id: $objID
+      data: { selection: { connect: { id: $rulesID } } }
+    ) {
+      id
+    }
+  }
+` as import("../../../__generated__/ts-gql/updateAnObjective").type;
+
+const PickSecondary = ({
+  availableSecondaries,
+  secondaryID,
+  num,
+  selection,
+}) => {
+  const [updateSeconday] = useMutation(UPDATE_AN_OBJECTIVE);
+
+  return (
+    <>
+      <h2>Pick Secondary {num + 1}</h2>
+      <Select
+        defaultValue={{
+          value: selection.id,
+          label: `${selection.name} (${selection.category})`,
+        }}
+        options={availableSecondaries}
+        onChange={({ value }, { action }) =>
+          action === "select-option" &&
+          updateSeconday({
+            variables: { objID: secondaryID, rulesID: value },
+          }).then(() => console.log("updated", secondaryID, value))
+        }
+      />
+    </>
+  );
+};
+
+const PlayerPlanning = ({
+  cantMoveFromBattle,
+  army,
+  id,
+  refetch,
+}: {
+  cantMoveFromBattle: boolean;
+  army: typeof fragment.___type.result;
+  id: string;
+  refetch: Function;
+}) => {
+  const { data } = useQuery(GET_AVAILABLE_SECONDARIES, {
+    variables: { missionID: id },
+  });
+
+  const availableSecondaries = useMemo(
+    () =>
+      data?.allObjectiveOptions
+        // TODO we should be able to make a better filter here so we don't need to filter out primaries
+        .filter(({ category }) => category !== "primary")
+        .concat(data?.Mission?.secondary)
+        .map(({ name, category, id }) => ({
+          value: id,
+          label: `${name} (${category})`,
+        })),
+    [data?.Mission, data?.allObjectiveOptions]
+  );
+
+  const [preBattleUpdateInfo] = useMutation(UPDATE_INFO);
+  const [activateBattle] = useMutation(MAKE_BATTLE_ACTIVE);
+  // we assume if there is no army, that means that the user is not logged in
+  // this is an accurate but inellegant handle
   if (!army) {
     return (
       <div>Game has not yet started, please wait a bit before spectating</div>
     );
   }
 
-  const [secondaries, setSecondaries] = useState(army.secondaries);
   const [notes, setNotes] = useState(army.notes || "");
-
-  const [preBattleUpdateInfo] = useMutation(UPDATE_INFO);
-  const [activateBattle] = useMutation(MAKE_BATTLE_ACTIVE);
 
   return (
     <>
-      {secondaries.map(({ name }, i) => (
+      {army.secondaries.map(({ id, selection }, i) => (
         <PickSecondary
-          key={i}
-          name={name}
+          key={id}
           num={i}
-          onChange={({ target }) =>
-            setSecondaries(
-              secondaries.map((s, i2) =>
-                i2 !== i ? s : { ...s, name: target.value }
-              )
-            )
-          }
+          secondaryID={id}
+          selection={selection}
+          availableSecondaries={availableSecondaries}
         />
       ))}
       <div>
@@ -251,12 +313,6 @@ const PlayerPlanning = ({ cantMoveFromBattle, army, id, refetch }) => {
           onClick={() =>
             preBattleUpdateInfo({
               variables: {
-                s1: secondaries[0].name,
-                s2: secondaries[1].name,
-                s3: secondaries[2].name,
-                s1ID: secondaries[0].id,
-                s2ID: secondaries[1].id,
-                s3ID: secondaries[2].id,
                 armyInfoID: army.id,
                 notes,
               },
@@ -416,9 +472,6 @@ const BattleView = () => {
       </div>
     );
   }
-
-  console.log("battleData", battleData);
-  console.log("userData", userData);
 
   if (!battleData || !userData) {
     return <div>Fetching info for the battle</div>;
