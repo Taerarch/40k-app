@@ -7,6 +7,7 @@ import Select from "react-select";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 import { Button } from "../../components/Button";
+// TODO refactor this code, and split this file out into more bite-size manageable chunks
 
 const fragment = gql`
   fragment Army_info on BattleInfo {
@@ -284,6 +285,10 @@ const PlayerPlanning = ({
 
   const [notes, setNotes] = useState(army.notes || "");
 
+  // TODO: validate your secondaries picks and warn for errors
+  // Major errors are:
+  //    Picking the same secondary twice
+  //    Having two secondaries from the same category
   return (
     <>
       {army.secondaries.map(({ id, selection }, i) => (
