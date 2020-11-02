@@ -26,7 +26,7 @@ process.env.CONNECT_TO =
 const keystone = new Keystone({
   adapter: new Adapter(),
   onConnect: initialiseData,
-  cookieSecret: "this-is-a-bad-secret",
+  cookieSecret: process.env.COOKIE_SECRET || "this-is-a-bad-secret",
 });
 
 keystone.createList("User", User);
@@ -68,9 +68,12 @@ module.exports = {
     new GraphQLApp(),
     new AdminUIApp({
       name: PROJECT_NAME,
-      enableDefaultRoute: true,
+      enableDefaultRoute: false,
       authStrategy,
     }),
     new NextApp({ dir: "app" }),
   ],
+  configureExpress: (app) => {
+    app.set("trust proxy", 1);
+  },
 };
