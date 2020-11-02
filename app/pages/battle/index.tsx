@@ -6,6 +6,7 @@ import Link from "next/link";
 import { palette } from "../../../palette";
 import { battleStatuses } from "../../../constants";
 import { getScore } from "../../lib/utilities";
+import { Button } from "../../components/Button";
 
 const fragment = gql`
   fragment Army_info_2 on BattleInfo {
@@ -129,6 +130,9 @@ const BattleList = () => {
   // show a table of relevant info for each battle
   return (
     <div>
+      <Link href="/battle/create">
+        <a>Create a new battle</a>
+      </Link>
       <Table battles={sortedBattles} />
     </div>
   );

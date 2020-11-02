@@ -6,6 +6,8 @@ import { useMemo, useState } from "react";
 import Select from "react-select";
 import { useRouter } from "next/router";
 import { missionTypes } from "../../../constants";
+import { Textarea } from "../../components/TextArea";
+import { Button } from "../../components/Button";
 
 const missionTypesArray = Object.entries(missionTypes)
   .map(([key, rest]) => ({
@@ -67,8 +69,8 @@ const CREATE_BATTLE = gql`
 
 const ArmySelect = ({ allArmies, onChange }) => (
   <Select
-    options={allArmies.map(({ name, faction, owner }) => ({
-      value: name,
+    options={allArmies.map(({ name, faction, owner, id }) => ({
+      value: id,
       label: `${owner.name}: ${faction} (${name})`,
     }))}
     onChange={(item, { action }) =>
@@ -100,10 +102,10 @@ const Create = () => {
   const { data } = useQuery(GET_INITIAL_DATA);
 
   // TODO: make this form accessible instead of these hacks
-  const [army1, setArmy1] = useState();
-  const [army2, setArmy2] = useState();
+  const [army1ID, setArmy1] = useState();
+  const [army2ID, setArmy2] = useState();
   const [points, setPoints] = useState(2000);
-  const [missionID, setMissionID] = useState();
+  const [missionID, setMissionID] = useState<string | undefined>();
   const [description, setDescription] = useState("");
   const { push } = useRouter();
 
@@ -132,11 +134,11 @@ const Create = () => {
   }
 
   const createDisabled = !(
-    army1 &&
-    army2 &&
+    army1ID &&
+    army2ID &&
     points &&
     missionID &&
-    army1 !== army2
+    army1ID !== army2ID
   );
   return (
     <div>
@@ -155,9 +157,21 @@ const Create = () => {
             />
           </div>
           <div>
-            <h2>Name of the Mission</h2>
+            <h2 css={{ display: "flex", justifyContent: "space-between" }}>
+              <span>Name of the Mission</span>
+              <Button
+                onClick={() =>
+                  setMissionID(
+                    missions[Math.floor(Math.random() * missions.length)].value
+                  )
+                }
+              >
+                Randomize from options
+              </Button>
+            </h2>
             <Select
               options={missions}
+              value={missions.find(({ value }) => value === missionID)}
               onChange={(item, { action }) =>
                 action === "select-option" && setMissionID(item.value)
               }
@@ -165,12 +179,12 @@ const Create = () => {
           </div>
           <div>
             <h2>Describe the scenario (flavor stuff)</h2>
-            <textarea
+            <Textarea
               value={description}
               onChange={({ target }) => setDescription(target.value)}
             />
           </div>
-          {army1 && army1 === army2 && (
+          {army1ID && army1ID === army2ID && (
             <div>
               You've selected one army to fight against itself - you'll need to
               change one side
@@ -182,8 +196,8 @@ const Create = () => {
               onClick={() => {
                 createABattle({
                   variables: {
-                    army1ID: allArmies.find(({ name }) => name === army1).id,
-                    army2ID: allArmies.find(({ name }) => name === army2).id,
+                    army1ID,
+                    army2ID,
                     points,
                     missionID,
                     description,
