@@ -20,7 +20,8 @@ const {
 
 const PROJECT_NAME = "40k-app";
 
-process.env.CONNECT_TO = "postgres://localhost/40k-app";
+process.env.CONNECT_TO =
+  process.env.DATABASE_URL || "postgres://localhost/40k-app";
 
 const keystone = new Keystone({
   adapter: new Adapter(),

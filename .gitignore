@@ -3,3 +3,4 @@ node_modules
 wh40k
 .DS_Store
 secret-data.js
+dist

@@ -8,6 +8,8 @@ import PlayerPlanning from "../../components/views/battle/planning";
 import PlayerPlaying from "../../components/views/battle/playing";
 import PostBattle from "../../components/views/battle/postbattle";
 import SpectatorMode from "../../components/views/battle/spectator";
+import { BattleInfo } from "../../lib/fragments";
+
 // TODO refactor this code, and split this file out into more bite-size manageable chunks
 
 const GET_BATTLE = gql`

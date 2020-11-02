@@ -2,9 +2,7 @@
 import { jsx } from "@emotion/core";
 import { useMutation } from "@ts-gql/apollo";
 import { gql, FragmentData } from "@ts-gql/tag";
-import { armyInfoFragment } from "../lib/fragments";
-
-type BattleInfo = Readonly<FragmentData<typeof armyInfoFragment>>;
+import { armyInfoFragment, BattleInfo } from "../lib/fragments";
 
 type BoardProps = BattleInfo & {
   isInteractable?: boolean;

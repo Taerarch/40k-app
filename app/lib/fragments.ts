@@ -1,4 +1,4 @@
-import { gql } from "@ts-gql/tag";
+import { gql, FragmentData } from "@ts-gql/tag";
 
 export const armyInfoFragment = gql`
   fragment Army_info on BattleInfo {
@@ -33,3 +33,5 @@ export const armyInfoFragment = gql`
     }
   }
 ` as import("../../__generated__/ts-gql/Army_info").type;
+
+export type BattleInfo = Readonly<FragmentData<typeof armyInfoFragment>>;

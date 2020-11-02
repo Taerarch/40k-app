@@ -17,13 +17,13 @@ const GET_SYSTEM = gql`
       }
     }
   }
-`as import("../../__generated__/ts-gql/getSystems").type;
+` as import("../../__generated__/ts-gql/getSystems").type;
 
 const System = () => {
   const { loading, error, data } = useQuery(GET_SYSTEM);
-  if (loading) return "loading...";
+  if (loading) return <div>"loading..."</div>;
   return (
-    <div display="flex">
+    <div css={{ display: "flex" }}>
       <Planet size={2} name="One" />
       <Planet size={4} name="Pox" />
       <Planet size={1} name="Articuno" />

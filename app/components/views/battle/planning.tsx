@@ -61,6 +61,7 @@ const CHECK_OPPONENT_READY = gql`
       id
       secondaries {
         id
+        score
         selection {
           id
           name
@@ -145,7 +146,6 @@ const PlayerPlanning = ({
   opponentID,
   refetch,
 }: {
-  cantMoveFromBattle: boolean;
   army: typeof armyInfoFragment.___type.result;
   id: string;
   refetch: Function;
