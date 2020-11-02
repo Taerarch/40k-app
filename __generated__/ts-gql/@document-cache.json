@@ -1,24 +1,19 @@
 {
   "version": "ts-gql-document-extractor@v1,@babel/parser@7.12.3",
-  "integrity": "__TS_GQL_INTEGRITY_0735ccf807d27dd39b3d0efcd36819f2_TS_GQL_INTEGRITY__",
+  "integrity": "__TS_GQL_INTEGRITY_c4e3021173ccdedefd87078519ec924d_TS_GQL_INTEGRITY__",
   "cache": {
     "/Users/noviny/Development/40k-app/__generated__/ts-gql/Army_info.ts": {
       "hash": "b443f799ac360a19a973904092925606",
       "errors": [],
       "documents": []
     },
-    "/Users/noviny/Development/40k-app/__generated__/ts-gql/createABattle.ts": {
-      "hash": "cc0aeb9a11d5c2a54a687dd5c70698e2",
+    "/Users/noviny/Development/40k-app/__generated__/ts-gql/activateBattle.ts": {
+      "hash": "c84cf07db96f9741a11283cd1ccac04b",
       "errors": [],
       "documents": []
     },
-    "/Users/noviny/Development/40k-app/__generated__/ts-gql/endBattle.ts": {
-      "hash": "bebc59ea3e71e1c2376ea83a549b3297",
-      "errors": [],
-      "documents": []
-    },
-    "/Users/noviny/Development/40k-app/__generated__/ts-gql/checkOpponentReady.ts": {
-      "hash": "4853db2865ebcd1a00b09d331dfa889d",
+    "/Users/noviny/Development/40k-app/__generated__/ts-gql/Army_info_2.ts": {
+      "hash": "485cab0dadaa4d017502e9c9674de4f7",
       "errors": [],
       "documents": []
     },
@@ -27,8 +22,18 @@
       "errors": [],
       "documents": []
     },
-    "/Users/noviny/Development/40k-app/__generated__/ts-gql/Army_info_2.ts": {
-      "hash": "485cab0dadaa4d017502e9c9674de4f7",
+    "/Users/noviny/Development/40k-app/__generated__/ts-gql/endBattle.ts": {
+      "hash": "bebc59ea3e71e1c2376ea83a549b3297",
+      "errors": [],
+      "documents": []
+    },
+    "/Users/noviny/Development/40k-app/__generated__/ts-gql/@introspection.ts": {
+      "hash": "0cdcd912889da12636ebbfaca4b6559a",
+      "errors": [],
+      "documents": []
+    },
+    "/Users/noviny/Development/40k-app/__generated__/ts-gql/checkOpponentReady.ts": {
+      "hash": "4853db2865ebcd1a00b09d331dfa889d",
       "errors": [],
       "documents": []
     },
@@ -42,18 +47,13 @@
       "errors": [],
       "documents": []
     },
-    "/Users/noviny/Development/40k-app/__generated__/ts-gql/getBattle.ts": {
-      "hash": "1e2b87096aa065dc74ee09a13822d39f",
-      "errors": [],
-      "documents": []
-    },
     "/Users/noviny/Development/40k-app/__generated__/ts-gql/getCreateInitialData.ts": {
       "hash": "a61fef99752ef6001fd5514ade098940",
       "errors": [],
       "documents": []
     },
-    "/Users/noviny/Development/40k-app/__generated__/ts-gql/getSystems.ts": {
-      "hash": "63ad4d6d3ebd9282fe9047e6aefe2551",
+    "/Users/noviny/Development/40k-app/__generated__/ts-gql/createABattle.ts": {
+      "hash": "cc0aeb9a11d5c2a54a687dd5c70698e2",
       "errors": [],
       "documents": []
     },
@@ -62,23 +62,8 @@
       "errors": [],
       "documents": []
     },
-    "/Users/noviny/Development/40k-app/__generated__/ts-gql/@introspection.ts": {
-      "hash": "0cdcd912889da12636ebbfaca4b6559a",
-      "errors": [],
-      "documents": []
-    },
     "/Users/noviny/Development/40k-app/__generated__/ts-gql/preBattleUpdateInfo.ts": {
       "hash": "f0d7df1c922bd7af0927bfd56d2a82d1",
-      "errors": [],
-      "documents": []
-    },
-    "/Users/noviny/Development/40k-app/__generated__/ts-gql/unauthUser.ts": {
-      "hash": "fc0e5b98f43936ea3d70a4b6c37268ae",
-      "errors": [],
-      "documents": []
-    },
-    "/Users/noviny/Development/40k-app/__generated__/ts-gql/signin.ts": {
-      "hash": "30bd3e0fbb8abb24453d391f8690e3e1",
       "errors": [],
       "documents": []
     },
@@ -87,10 +72,58 @@
       "errors": [],
       "documents": []
     },
+    "/Users/noviny/Development/40k-app/__generated__/ts-gql/unauthUser.ts": {
+      "hash": "fc0e5b98f43936ea3d70a4b6c37268ae",
+      "errors": [],
+      "documents": []
+    },
     "/Users/noviny/Development/40k-app/__generated__/ts-gql/updateObjective.ts": {
       "hash": "f8cbf5b448b816d0447cd7ab3c696663",
       "errors": [],
       "documents": []
+    },
+    "/Users/noviny/Development/40k-app/app/components/Boards.tsx": {
+      "hash": "5ac3f5c8a05ea179a8b381dd33762aea",
+      "errors": [],
+      "documents": [
+        {
+          "loc": {
+            "start": {
+              "line": 11,
+              "column": 34
+            },
+            "end": {
+              "line": 18,
+              "column": 1
+            }
+          },
+          "document": "\n  mutation updateObjective($id: ID!, $score: Int!) {\n    updateObjective(id: $id, data: { score: $score }) {\n      id\n      score\n    }\n  }\n"
+        }
+      ]
+    },
+    "/Users/noviny/Development/40k-app/app/components/Planet.tsx": {
+      "hash": "f655d020c846b08352b90ac34a1c9244",
+      "errors": [],
+      "documents": []
+    },
+    "/Users/noviny/Development/40k-app/app/components/System.tsx": {
+      "hash": "2a6fc9560b3fd38a84c0abb2526d6453",
+      "errors": [],
+      "documents": [
+        {
+          "loc": {
+            "start": {
+              "line": 5,
+              "column": 22
+            },
+            "end": {
+              "line": 20,
+              "column": 1
+            }
+          },
+          "document": "\n  query getSystems {\n    allPlanets {\n      id\n      name\n      battlefields {\n        id\n        gridReference\n        controller {\n          id\n          name\n        }\n      }\n    }\n  }\n"
+        }
+      ]
     },
     "/Users/noviny/Development/40k-app/app/components/Button.tsx": {
       "hash": "a79ddb27042bbe41d2966809c0ec5f94",
@@ -142,66 +175,23 @@
         }
       ]
     },
-    "/Users/noviny/Development/40k-app/__generated__/ts-gql/activateBattle.ts": {
-      "hash": "c84cf07db96f9741a11283cd1ccac04b",
+    "/Users/noviny/Development/40k-app/__generated__/ts-gql/signin.ts": {
+      "hash": "30bd3e0fbb8abb24453d391f8690e3e1",
       "errors": [],
       "documents": []
     },
-    "/Users/noviny/Development/40k-app/app/components/System.tsx": {
-      "hash": "e528ba4d8a33a22c596380b41eb24291",
-      "errors": [],
-      "documents": [
-        {
-          "loc": {
-            "start": {
-              "line": 5,
-              "column": 22
-            },
-            "end": {
-              "line": 20,
-              "column": 1
-            }
-          },
-          "document": "\n  query getSystems {\n    allPlanets {\n      id\n      name\n      battlefields {\n        id\n        gridReference\n        controller {\n          id\n          name\n        }\n      }\n    }\n  }\n"
-        }
-      ]
-    },
-    "/Users/noviny/Development/40k-app/app/components/Boards.tsx": {
-      "hash": "771387a0463d3805834baa0c6b0cf4da",
-      "errors": [],
-      "documents": [
-        {
-          "loc": {
-            "start": {
-              "line": 13,
-              "column": 34
-            },
-            "end": {
-              "line": 20,
-              "column": 1
-            }
-          },
-          "document": "\n  mutation updateObjective($id: ID!, $score: Int!) {\n    updateObjective(id: $id, data: { score: $score }) {\n      id\n      score\n    }\n  }\n"
-        }
-      ]
-    },
-    "/Users/noviny/Development/40k-app/app/components/Planet.tsx": {
-      "hash": "f655d020c846b08352b90ac34a1c9244",
+    "/Users/noviny/Development/40k-app/app/pages/login.tsx": {
+      "hash": "c00225e8d1525e5440c3d016895f360c",
       "errors": [],
       "documents": []
     },
-    "/Users/noviny/Development/40k-app/app/lib/utilities.ts": {
-      "hash": "1da7c0961fd8293b39f17b121effd6f9",
-      "errors": [],
-      "documents": []
-    },
-    "/Users/noviny/Development/40k-app/app/components/TextArea.tsx": {
-      "hash": "9d983bf91107e9cb52b9be6a0f020a71",
+    "/Users/noviny/Development/40k-app/app/pages/_app.tsx": {
+      "hash": "34ea23d464595eea0136c33ea93a02f7",
       "errors": [],
       "documents": []
     },
     "/Users/noviny/Development/40k-app/app/lib/fragments.ts": {
-      "hash": "50a3d870817e774cca2ad5542779b3f5",
+      "hash": "e487ec433272ac4ecccdadc8ee4da287",
       "errors": [],
       "documents": [
         {
@@ -224,13 +214,18 @@
       "errors": [],
       "documents": []
     },
+    "/Users/noviny/Development/40k-app/app/components/TextArea.tsx": {
+      "hash": "9d983bf91107e9cb52b9be6a0f020a71",
+      "errors": [],
+      "documents": []
+    },
     "/Users/noviny/Development/40k-app/app/pages/select-battlefield.tsx": {
       "hash": "0d6863b951c2bcb6ed2813b6ae8b398c",
       "errors": [],
       "documents": []
     },
-    "/Users/noviny/Development/40k-app/app/pages/_app.tsx": {
-      "hash": "34ea23d464595eea0136c33ea93a02f7",
+    "/Users/noviny/Development/40k-app/app/lib/utilities.ts": {
+      "hash": "1da7c0961fd8293b39f17b121effd6f9",
       "errors": [],
       "documents": []
     },
@@ -266,27 +261,35 @@
         }
       ]
     },
-    "/Users/noviny/Development/40k-app/app/pages/login.tsx": {
-      "hash": "c00225e8d1525e5440c3d016895f360c",
-      "errors": [],
-      "documents": []
-    },
-    "/Users/noviny/Development/40k-app/app/components/views/battle/playing.tsx": {
-      "hash": "8235580aead0fe985035e183c900d867",
+    "/Users/noviny/Development/40k-app/app/pages/battle/[id].tsx": {
+      "hash": "8d56f853a52a2258dec433f459e7f18f",
       "errors": [],
       "documents": [
         {
           "loc": {
             "start": {
-              "line": 9,
+              "line": 15,
               "column": 22
             },
             "end": {
-              "line": 15,
+              "line": 28,
               "column": 1
             }
           },
-          "document": "\n  mutation endBattle($id: ID!) {\n    updateBattle(id: $id, data: { status: completed }) {\n      id\n    }\n  }\n"
+          "document": "\n  query getBattle($id: ID!) {\n    Battle(where: { id: $id }) {\n      status\n      id\n      army1 {\n        ...Army_info\n      }\n      army2 {\n        ...Army_info\n      }\n    }\n  }\n"
+        },
+        {
+          "loc": {
+            "start": {
+              "line": 30,
+              "column": 23
+            },
+            "end": {
+              "line": 36,
+              "column": 1
+            }
+          },
+          "document": "\n  query getAuthedUser {\n    authenticatedUser {\n      id\n    }\n  }\n"
         }
       ]
     },
@@ -322,18 +325,8 @@
         }
       ]
     },
-    "/Users/noviny/Development/40k-app/app/components/views/battle/postbattle.tsx": {
-      "hash": "250f3ec72950f66e72ec3d9e72707d88",
-      "errors": [],
-      "documents": []
-    },
-    "/Users/noviny/Development/40k-app/app/components/views/battle/spectator.tsx": {
-      "hash": "25703aafc2ca6fe9a3660d22aadc8ace",
-      "errors": [],
-      "documents": []
-    },
     "/Users/noviny/Development/40k-app/app/components/views/battle/planning.tsx": {
-      "hash": "12cc22b11cbdcf745c4235d5ec7621ea",
+      "hash": "56d2492cdea853407d63d5c4cf08109f",
       "errors": [],
       "documents": [
         {
@@ -403,37 +396,44 @@
         }
       ]
     },
-    "/Users/noviny/Development/40k-app/app/pages/battle/[id].tsx": {
-      "hash": "511bc346ec8e20b63dab2f38720c178e",
+    "/Users/noviny/Development/40k-app/__generated__/ts-gql/getSystems.ts": {
+      "hash": "63ad4d6d3ebd9282fe9047e6aefe2551",
+      "errors": [],
+      "documents": []
+    },
+    "/Users/noviny/Development/40k-app/__generated__/ts-gql/getBattle.ts": {
+      "hash": "1e2b87096aa065dc74ee09a13822d39f",
+      "errors": [],
+      "documents": []
+    },
+    "/Users/noviny/Development/40k-app/app/components/views/battle/playing.tsx": {
+      "hash": "8235580aead0fe985035e183c900d867",
       "errors": [],
       "documents": [
         {
           "loc": {
             "start": {
-              "line": 13,
+              "line": 9,
               "column": 22
             },
             "end": {
-              "line": 26,
+              "line": 15,
               "column": 1
             }
           },
-          "document": "\n  query getBattle($id: ID!) {\n    Battle(where: { id: $id }) {\n      status\n      id\n      army1 {\n        ...Army_info\n      }\n      army2 {\n        ...Army_info\n      }\n    }\n  }\n"
-        },
-        {
-          "loc": {
-            "start": {
-              "line": 28,
-              "column": 23
-            },
-            "end": {
-              "line": 34,
-              "column": 1
-            }
-          },
-          "document": "\n  query getAuthedUser {\n    authenticatedUser {\n      id\n    }\n  }\n"
+          "document": "\n  mutation endBattle($id: ID!) {\n    updateBattle(id: $id, data: { status: completed }) {\n      id\n    }\n  }\n"
         }
       ]
+    },
+    "/Users/noviny/Development/40k-app/app/components/views/battle/spectator.tsx": {
+      "hash": "25703aafc2ca6fe9a3660d22aadc8ace",
+      "errors": [],
+      "documents": []
+    },
+    "/Users/noviny/Development/40k-app/app/components/views/battle/postbattle.tsx": {
+      "hash": "250f3ec72950f66e72ec3d9e72707d88",
+      "errors": [],
+      "documents": []
     }
   }
 }
