@@ -4,3 +4,4 @@ wh40k
 .DS_Store
 secret-data.js
 dist
+*.dump
