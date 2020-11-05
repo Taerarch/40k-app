@@ -15,7 +15,9 @@
     "db-refresh": "dropdb 40k-app && createdb 40k-app && yarn create-tables",
     "create-tables": "cross-env CREATE_TABLES=true keystone create-tables",
     "seed-data": "cross-env RECREATE_DATABASE=true yarn dev",
-    "quick-reset": "yarn db-refresh && yarn seed-data"
+    "quick-reset": "yarn db-refresh && yarn seed-data",
+    "postinstall": "ts-gql build"
+
   },
   "cacheDirectories": [
     "app/.next/cache"
