@@ -5,3 +5,4 @@ wh40k
 secret-data.js
 dist
 *.dump
+__generated__

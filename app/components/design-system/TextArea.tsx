@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
-import { palette } from "../../palette";
+import { palette } from "../../../palette";
 
 const Textarea = (props) => (
   <textarea

@@ -6,7 +6,6 @@ import Link from "next/link";
 import { palette } from "../../../palette";
 import { battleStatuses } from "../../../constants";
 import { getScore } from "../../lib/utilities";
-import { Button } from "../../components/Button";
 
 const fragment = gql`
   fragment Army_info_2 on BattleInfo {

@@ -3,7 +3,7 @@ import { jsx } from "@emotion/core";
 import { useMutation } from "@ts-gql/apollo";
 import { gql } from "@ts-gql/tag";
 
-import { Button } from "../../Button";
+import { Button } from "../../design-system/Button";
 import Boards from "../../Boards";
 
 const END_BATTLE = gql`

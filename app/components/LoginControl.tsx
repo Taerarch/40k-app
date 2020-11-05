@@ -4,6 +4,8 @@ import { useMutation, useQuery } from "@ts-gql/apollo";
 import { gql } from "@ts-gql/tag";
 import { useState } from "react";
 
+import { Input } from "../components/design-system/Input";
+
 const AUTH_USER = gql`
   mutation signin($email: String, $password: String) {
     authenticate: authenticateUserWithPassword(
@@ -52,23 +54,6 @@ const LoggedIn = ({ name }) => {
     </div>
   );
 };
-
-const Input = ({ label, ...rest }) => (
-  <div css={{ paddingTop: 12 }}>
-    <label
-      css={{
-        width: 80,
-        display: "inline-block",
-        textAlign: "right",
-        paddingRight: 4,
-      }}
-      htmlFor="email"
-    >
-      {label}:
-    </label>
-    <input {...rest} />
-  </div>
-);
 
 const LogIn = () => {
   const [authUser, { client }] = useMutation(AUTH_USER);

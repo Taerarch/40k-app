@@ -4,7 +4,7 @@ import { ApolloProvider } from "@apollo/client";
 import { useApollo } from "../lib/apolloClient";
 
 import LoginControl from "../components/LoginControl";
-import { palette } from "../../palette";
+import { colours } from "../lib/colours";
 
 const Page = (props) => (
   <div
@@ -17,7 +17,13 @@ const Page = (props) => (
 );
 
 const Header = () => (
-  <div css={{ padding: 24, backgroundColor: palette.purple400 }}>
+  <div
+    css={{
+      padding: 24,
+      backgroundColor: colours.red700,
+      color: colours.neutral200,
+    }}
+  >
     <div
       css={{
         maxWidth: 640,
@@ -42,13 +48,13 @@ const AppComponent = ({ Component, pageProps }) => {
         styles={css`
           body {
             margin: 0px;
-            background-color: ${palette.green400};
+            background-color: ${colours.grey500};
           }
         `}
       />
       <ApolloProvider client={apolloClient}>
-        <Header />
         <Page>
+          <Header />
           <Content>
             <Component {...pageProps} />
           </Content>

@@ -5,10 +5,12 @@ import { gql } from "@ts-gql/tag";
 import Select from "react-select";
 
 import { useMemo, useState } from "react";
-import { Button } from "../../Button";
-import { Textarea } from "../../TextArea";
+import { Button } from "../../design-system/Button";
+import { Textarea } from "../../design-system/TextArea";
 import { armyInfoFragment } from "../../../lib/fragments";
+import MissionDisplay from "../../MissionDisplay";
 
+import { GET_AVAILABLE_SECONDARIES } from "../../../lib/queries";
 const UPDATE_INFO = gql`
   mutation preBattleUpdateInfo($armyInfoID: ID!, $notes: String!) {
     updateBattleInfo(id: $armyInfoID, data: { notes: $notes }) {
@@ -25,24 +27,6 @@ const MAKE_BATTLE_ACTIVE = gql`
     }
   }
 ` as import("../../../../__generated__/ts-gql/activateBattle").type;
-
-const GET_AVAILABLE_SECONDARIES = gql`
-  query getAvailableSecondaries($missionID: ID!) {
-    allObjectiveOptions(where: { category_not: "missionSecondary" }) {
-      id
-      name
-      category
-    }
-    Mission(where: { id: $missionID }) {
-      id
-      secondary {
-        id
-        name
-        category
-      }
-    }
-  }
-` as import("../../../../__generated__/ts-gql/getAvailableSecondaries").type;
 
 const UPDATE_AN_OBJECTIVE = gql`
   mutation updateAnObjective($objID: ID!, $rulesID: ID!) {
@@ -160,23 +144,13 @@ const PlayerPlanning = ({
     pollInterval: 5000,
   });
 
-  console.log(
-    "opponentSecondaries",
-    opponentSecondaries?.BattleInfo?.secondaries
-  );
-
   const opponentReady = useMemo(
-    () =>
-      validateSecondaries(opponentSecondaries?.BattleInfo?.secondaries)
-        .status === "ready",
+    () => validateSecondaries(opponentSecondaries?.BattleInfo?.secondaries),
     [opponentSecondaries]
   );
-  const iAmReady = useMemo(
-    () => validateSecondaries(army.secondaries).status === "ready",
-    [army.secondaries]
-  );
-
-  console.log("I am ready", iAmReady);
+  const iAmReady = useMemo(() => validateSecondaries(army.secondaries), [
+    army.secondaries,
+  ]);
 
   const availableSecondaries = useMemo(
     () =>
@@ -209,6 +183,11 @@ const PlayerPlanning = ({
   //    Having two secondaries from the same category
   return (
     <>
+      <MissionDisplay id={id} />
+      <i>
+        NOTE: Before selecting secondaries, you should exchange army lists with
+        your opponent
+      </i>
       {army.secondaries.map(({ id, selection }, i) => (
         <PickSecondary
           key={id}
@@ -223,6 +202,7 @@ const PlayerPlanning = ({
         <Textarea
           value={notes}
           onChange={({ target }) => setNotes(target.value)}
+          placeholder="This would be a great place to note down units you have in reserve"
         />
       </div>
       <div
@@ -245,7 +225,9 @@ const PlayerPlanning = ({
           Update Info
         </Button>
         <Button
-          disabled={!opponentReady || !iAmReady}
+          disabled={
+            opponentReady.status !== "ready" || iAmReady.status !== "ready"
+          }
           onClick={() =>
             activateBattle({ variables: { id } }).then(() => refetch())
           }
@@ -253,6 +235,12 @@ const PlayerPlanning = ({
           Begin Battle
         </Button>
       </div>
+      {iAmReady.code === "duplicateCategory" && (
+        <p>
+          More than one of your secondaries are from the same category. You'll
+          need to pick again.
+        </p>
+      )}
     </>
   );
 };

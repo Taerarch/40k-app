@@ -4,11 +4,11 @@ import { useQuery } from "@ts-gql/apollo";
 import { gql } from "@ts-gql/tag";
 
 import { useRouter } from "next/router";
-import PlayerPlanning from "../../components/views/battle/planning";
-import PlayerPlaying from "../../components/views/battle/playing";
-import PostBattle from "../../components/views/battle/postbattle";
-import SpectatorMode from "../../components/views/battle/spectator";
-import { BattleInfo } from "../../lib/fragments";
+import PlayerPlanning from "../../../components/views/battle/planning";
+import PlayerPlaying from "../../../components/views/battle/playing";
+import PostBattle from "../../../components/views/battle/postbattle";
+import SpectatorMode from "../../../components/views/battle/spectator";
+import { BattleInfo } from "../../../lib/fragments";
 
 // TODO refactor this code, and split this file out into more bite-size manageable chunks
 
@@ -25,7 +25,7 @@ const GET_BATTLE = gql`
       }
     }
   }
-` as import("../../../__generated__/ts-gql/getBattle").type;
+` as import("../../../../__generated__/ts-gql/getBattle").type;
 
 const AUTHED_USER = gql`
   query getAuthedUser {
@@ -33,7 +33,7 @@ const AUTHED_USER = gql`
       id
     }
   }
-` as import("../../../__generated__/ts-gql/getAuthedUser").type;
+` as import("../../../../__generated__/ts-gql/getAuthedUser").type;
 
 type PlayerViewProps = typeof GET_BATTLE.___type.result.Battle & {
   userId: String;

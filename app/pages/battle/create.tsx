@@ -6,8 +6,10 @@ import { useMemo, useState } from "react";
 import Select from "react-select";
 import { useRouter } from "next/router";
 import { missionTypes } from "../../../constants";
-import { Textarea } from "../../components/TextArea";
-import { Button } from "../../components/Button";
+import { Textarea } from "../../components/design-system/TextArea";
+import { Button } from "../../components/design-system/Button";
+import { Input } from "../../components/design-system/Input";
+import MissionDisplay from "../../components/MissionDisplay";
 
 const missionTypesArray = Object.entries(missionTypes)
   .map(([key, rest]) => ({
@@ -67,8 +69,11 @@ const CREATE_BATTLE = gql`
   }
 ` as import("../../../__generated__/ts-gql/createABattle").type;
 
-const ArmySelect = ({ allArmies, onChange }) => (
+const ArmySelect = ({ allArmies, label, onChange }) => (
   <Select
+    label={label}
+    isSearchable={false}
+    placeholder={label}
     options={allArmies.map(({ name, faction, owner, id }) => ({
       value: id,
       label: `${owner.name}: ${faction} (${name})`,
@@ -76,6 +81,9 @@ const ArmySelect = ({ allArmies, onChange }) => (
     onChange={(item, { action }) =>
       action === "select-option" && onChange(item.value)
     }
+    styles={{
+      container: (provided) => ({ ...provided, flex: 1 }),
+    }}
   />
 );
 
@@ -144,21 +152,42 @@ const Create = () => {
     <div>
       {allArmies ? (
         <div>
-          <h2>Select Army 1</h2>
-          <ArmySelect allArmies={allArmies} onChange={setArmy1} />
-          <h2>Select Army 2</h2>
-          <ArmySelect allArmies={allArmies} onChange={setArmy2} />
-          <div>
-            <h2>Set Number of Points</h2>
-            <input
-              type="number"
-              value={points}
-              onChange={({ target }) => setPoints(parseInt(target.value))}
+          <div
+            css={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <ArmySelect
+              label="Select First Army"
+              allArmies={allArmies}
+              onChange={setArmy1}
+            />
+            <div css={{ textAlign: "center", width: 32 }}>V</div>
+            <ArmySelect
+              label="Select Second Army"
+              allArmies={allArmies}
+              onChange={setArmy2}
             />
           </div>
+          <Input
+            label="Set Number of Points"
+            labelCss={{ width: "auto" }}
+            inputCss={{ textAlign: "center" }}
+            type="number"
+            value={points}
+            onChange={({ target }) => setPoints(parseInt(target.value))}
+          />
           <div>
-            <h2 css={{ display: "flex", justifyContent: "space-between" }}>
-              <span>Name of the Mission</span>
+            <div
+              css={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <h2>Select Mission</h2>
               <Button
                 onClick={() =>
                   setMissionID(
@@ -166,10 +195,11 @@ const Create = () => {
                   )
                 }
               >
-                Randomize from options
+                Randomly Pick
               </Button>
-            </h2>
+            </div>
             <Select
+              isSearchable={false}
               options={missions}
               value={missions.find(({ value }) => value === missionID)}
               onChange={(item, { action }) =>
@@ -177,6 +207,7 @@ const Create = () => {
               }
             />
           </div>
+          {missionID && <MissionDisplay id={missionID} />}
           <div>
             <h2>Describe the scenario (flavor stuff)</h2>
             <Textarea
@@ -190,8 +221,14 @@ const Create = () => {
               change one side
             </div>
           )}
-          <div>
-            <button
+          <div
+            css={{
+              display: "flex",
+              justifyContent: "space-around",
+              paddingTop: 8,
+            }}
+          >
+            <Button
               disabled={createDisabled}
               onClick={() => {
                 createABattle({
@@ -207,7 +244,7 @@ const Create = () => {
               }}
             >
               Create Mission
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
