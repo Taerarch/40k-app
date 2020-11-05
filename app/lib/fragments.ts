@@ -13,7 +13,7 @@ export const armyInfoFragment = gql`
       id
       score
     }
-    secondaries {
+    secondaries(sortBy: id_ASC) {
       id
       selection {
         id

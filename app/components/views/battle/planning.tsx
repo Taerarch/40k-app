@@ -64,10 +64,24 @@ const PickSecondary = ({
 }) => {
   const [updateSeconday] = useMutation(UPDATE_AN_OBJECTIVE);
 
+  const options = useMemo(() => {
+    if (!availableSecondaries) return [];
+
+    let cats = {};
+
+    availableSecondaries.forEach(({ name, category, rules, id }) => {
+      if (!cats[category]) cats[category] = [];
+      cats[category].push({ value: id, label: name, rules });
+    });
+
+    return Object.entries(cats).map(([label, options]) => ({ label, options }));
+  }, [availableSecondaries]);
+
   const defaultValue = selection
     ? {
         value: selection.id,
-        label: `${selection.name} (${selection.category})`,
+        label: selection.name,
+        rules: selection.rules,
       }
     : null;
 
@@ -76,7 +90,7 @@ const PickSecondary = ({
       <h2>Pick Secondary {num + 1}</h2>
       <Select
         defaultValue={defaultValue}
-        options={availableSecondaries}
+        options={options}
         onChange={({ value }, { action }) =>
           action === "select-option" &&
           updateSeconday({
@@ -157,11 +171,7 @@ const PlayerPlanning = ({
       data?.allObjectiveOptions
         // TODO we should be able to make a better filter here so we don't need to filter out primaries
         .filter(({ category }) => category !== "primary")
-        .concat(data?.Mission?.secondary)
-        .map(({ name, category, id }) => ({
-          value: id,
-          label: `${name} (${category})`,
-        })),
+        .concat(data?.Mission?.secondary),
     [data?.Mission, data?.allObjectiveOptions]
   );
 

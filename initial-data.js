@@ -91,8 +91,8 @@ const initialData = {
 };
 
 async function createInitialData(keystone) {
-  if (!process.env.RECREATE_DATABASE) return;
   let schema = keystone.dumpSchema();
+  if (!process.env.RECREATE_DATABASE) return;
   fs.writeFileSync("./schema.graphql", schema);
 
   let newItems = Object.entries(initialData);

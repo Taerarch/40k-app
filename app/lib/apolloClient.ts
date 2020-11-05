@@ -8,9 +8,7 @@ function createApolloClient() {
     ssrMode: typeof window === "undefined",
     link: new HttpLink({
       // TODO: Make this dynamic so it doesn't break in prod
-      uri:
-        "https://a-40k-battle-reporter.herokuapp.com/admin/api" ||
-        "http://localhost:3000/admin/api", // Server URL (must be absolute)
+      uri: `${process.env.apolloURL}/admin/api`, // Server URL (must be absolute)
       credentials: "same-origin", // Additional fetch() options like `credentials` or `headers`
     }),
     cache: new InMemoryCache(),

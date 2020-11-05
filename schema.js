@@ -9,6 +9,7 @@ const {
   Select,
   Relationship,
   Integer,
+  CalendarDay,
 } = require("@keystonejs/fields");
 
 const {
@@ -75,7 +76,7 @@ module.exports.Unit = {
   },
 };
 
-module.exports.Battle = {
+module.exports.Battle = (keystone) => ({
   fields: {
     army1: { type: Relationship, ref: "BattleInfo" },
     army2: { type: Relationship, ref: "BattleInfo" },
@@ -89,10 +90,27 @@ module.exports.Battle = {
       type: Select,
       options: objectToOptions(battleStatuses),
     },
+    playDate: { type: CalendarDay },
   },
-};
+  labelResolver: async ({ id, playDate }) => {
+    let { data } = await keystone.executeGraphQL({
+      query: `query {
+        Battle(where: {id: ${id}}) {
+          army1 {
+            _label_
+          }
+          army2 {
+            _label_
+          }
+        }
+      }`,
+    });
 
-module.exports.BattleInfo = {
+    return `${data.Battle.army1._label_} v ${data.Battle.army2._label_} (${playDate})`;
+  },
+});
+
+module.exports.BattleInfo = (keystone) => ({
   fields: {
     army: { type: Relationship, ref: "Army" },
     primary: { type: Relationship, ref: "Objective" },
@@ -100,7 +118,18 @@ module.exports.BattleInfo = {
     CP: { type: Integer, defaultValue: 0 },
     notes: { type: Markdown },
   },
-};
+  labelResolver: async ({ army }) => {
+    let { data } = await keystone.executeGraphQL({
+      query: `query {
+        Army(where: {id: ${army}}) {
+          name
+        }
+      }`,
+    });
+
+    return data.Army.name;
+  },
+});
 
 module.exports.Mission = {
   fields: {

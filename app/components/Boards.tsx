@@ -2,6 +2,7 @@
 import { jsx } from "@emotion/core";
 import { useMutation } from "@ts-gql/apollo";
 import { gql } from "@ts-gql/tag";
+import { colours } from "../lib/colours";
 import { BattleInfo } from "../lib/fragments";
 
 type BoardProps = BattleInfo & {
@@ -16,6 +17,15 @@ const UPDATE_OBJECTIVE_SCORE = gql`
     }
   }
 ` as import("../../__generated__/ts-gql/updateObjective").type;
+
+const UPDATE_CP = gql`
+  mutation updateCP($id: ID!, $CP: Int!) {
+    updateBattleInfo(id: $id, data: { CP: $CP }) {
+      id
+      CP
+    }
+  }
+` as import("../../__generated__/ts-gql/updateCP").type;
 
 const Imp = ({ name, score, isInteractable, onChange, max = 15 }) => (
   <li key={name} css={{ display: "flex", justifyContent: "space-between" }}>
@@ -43,8 +53,11 @@ const Board = ({
   isInteractable = false,
   army,
   CP,
+  notes,
+  id,
 }: BoardProps) => {
   const [updateObjective] = useMutation(UPDATE_OBJECTIVE_SCORE);
+  const [updateCP] = useMutation(UPDATE_CP);
 
   return (
     <div css={{ maxWidth: 200, display: "inline-block" }}>
@@ -78,14 +91,37 @@ const Board = ({
           isInteractable={isInteractable}
           name="CP"
           score={CP}
-          onChange={() => {}}
+          max={99}
+          onChange={({ target }) =>
+            updateCP({ variables: { id, CP: parseInt(target.value) } })
+          }
         />
       </ul>
-      Current total score:{" "}
-      {primary.score +
-        secondaries.reduce((acc, b) => {
-          return acc + b.score;
-        }, 0)}
+      <div
+        css={{
+          paddingBottom: 8,
+          paddingTop: 8,
+          borderTop: `1px solid ${colours.neutral300}`,
+        }}
+      >
+        <span css={{ paddingRight: 4 }}>Current score:</span>
+        <span>
+          {primary.score +
+            secondaries.reduce((acc, b) => {
+              return acc + b.score;
+            }, 0)}
+        </span>
+      </div>
+      <div
+        css={{
+          borderTop: `1px solid ${colours.neutral300}`,
+          padding: 12,
+          borderRadius: 3,
+        }}
+      >
+        <b>Pre-battle notes:</b>
+        <p>{notes}</p>
+      </div>
     </div>
   );
 };

@@ -6,3 +6,5 @@ secret-data.js
 dist
 *.dump
 __generated__
+
+*.dump.*

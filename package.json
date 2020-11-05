@@ -17,10 +17,10 @@
     "seed-data": "cross-env RECREATE_DATABASE=true yarn dev",
     "quick-reset": "yarn db-refresh && yarn seed-data",
     "postinstall": "ts-gql build"
-
   },
   "cacheDirectories": [
-    "app/.next/cache"
+    "app/.next/cache",
+    "__generated__"
   ],
   "dependencies": {
     "@apollo/client": "^3.1.4",

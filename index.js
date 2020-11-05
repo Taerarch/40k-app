@@ -32,8 +32,8 @@ const keystone = new Keystone({
 keystone.createList("User", User);
 keystone.createList("Army", Army);
 keystone.createList("Unit", Unit);
-keystone.createList("Battle", Battle);
-keystone.createList("BattleInfo", BattleInfo);
+keystone.createList("Battle", Battle(keystone));
+keystone.createList("BattleInfo", BattleInfo(keystone));
 keystone.createList("Mission", Mission);
 keystone.createList("Objective", Objective);
 keystone.createList("ObjectiveOption", ObjectiveOption);

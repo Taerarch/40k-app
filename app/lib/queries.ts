@@ -2,7 +2,10 @@ import { gql } from "@ts-gql/tag";
 
 export const GET_AVAILABLE_SECONDARIES = gql`
   query getAvailableSecondaries($missionID: ID!) {
-    allObjectiveOptions(where: { category_not: "missionSecondary" }) {
+    allObjectiveOptions(
+      where: { category_not: "missionSecondary" }
+      sortBy: category_ASC
+    ) {
       id
       name
       category

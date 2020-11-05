@@ -64,7 +64,13 @@ const CREATE_BATTLE = gql`
         army2: {
           create: {
             army: { connect: { id: $army2ID } }
-            primary: { create: { name: "Primary", score: 0 } }
+            primary: {
+              create: {
+                name: "Primary"
+                score: 0
+                selection: { connect: { id: $primaryID } }
+              }
+            }
             CP: $startingCP
             secondaries: { create: [{ score: 0 }, { score: 0 }, { score: 0 }] }
           }
