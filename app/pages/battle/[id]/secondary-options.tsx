@@ -1,7 +1,5 @@
 import { useRouter } from "next/router";
-import { useQuery } from "@ts-gql/apollo";
 import MD from "react-markdown";
-import { GET_AVAILABLE_SECONDARIES } from "../../../lib/queries";
 import useAvailableSecondaries from "../../../lib/use-available-secondaries";
 
 const SecondaryOptions = () => {
@@ -9,7 +7,9 @@ const SecondaryOptions = () => {
     query: { id },
   } = useRouter();
 
-  const { availableSecondaries, error } = useAvailableSecondaries(id);
+  let betterID = Array.isArray(id) ? id[0] : id;
+
+  const { availableSecondaries, error } = useAvailableSecondaries(betterID);
 
   if (error)
     return <div>Some error occurred who knows what. Are you logged in?</div>;

@@ -1,9 +1,21 @@
 /** @jsx jsx */
-import { jsx } from "@emotion/core";
+import { jsx, ObjectInterpolation } from "@emotion/core";
+import { InputHTMLAttributes } from "react";
 
 import { colours } from "../../lib/colours";
 
-const Input = ({ label, labelCss, inputCss, ...rest }) => (
+type InputProps = InputHTMLAttributes<HTMLInputElement> & {
+  label: string;
+  labelCss?: ObjectInterpolation<any>;
+  inputCss?: ObjectInterpolation<any>;
+};
+
+const Input = ({
+  label,
+  labelCss = {},
+  inputCss = {},
+  ...rest
+}: InputProps) => (
   <div css={{ paddingTop: 12 }}>
     <label
       css={{

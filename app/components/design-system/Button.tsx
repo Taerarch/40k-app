@@ -2,6 +2,7 @@
 import { jsx } from "@emotion/core";
 import isRelativeUrl from "is-relative-url";
 import { default as NextLink } from "next/link";
+import { ReactNode } from "react";
 import { colours } from "../../lib/colours";
 
 const defaultStyles = {
@@ -56,7 +57,10 @@ export const Button = ({
   ...rest
 }: {
   href?: string;
-  mode: keyof typeof styles;
+  mode?: keyof typeof styles;
+  onClick?: () => any;
+  children: ReactNode;
+  disabled?: boolean;
 }) =>
   href ? (
     <Link href={href} mode={mode} {...rest} />

@@ -39,6 +39,7 @@ const CREATE_BATTLE = gql`
     $army1ID: ID!
     $army2ID: ID!
     $startingCP: Int!
+    $primaryID: ID!
   ) {
     createBattle(
       data: {
@@ -49,7 +50,13 @@ const CREATE_BATTLE = gql`
         army1: {
           create: {
             army: { connect: { id: $army1ID } }
-            primary: { create: { name: "Primary", score: 0 } }
+            primary: {
+              create: {
+                name: "Primary"
+                score: 0
+                selection: { connect: { id: $primaryID } }
+              }
+            }
             CP: $startingCP
             secondaries: { create: [{ score: 0 }, { score: 0 }, { score: 0 }] }
           }
@@ -65,6 +72,9 @@ const CREATE_BATTLE = gql`
       }
     ) {
       id
+      army1 {
+        id
+      }
     }
   }
 ` as import("../../../__generated__/ts-gql/createABattle").type;
@@ -93,6 +103,9 @@ const GET_INITIAL_DATA = gql`
       id
       name
       forceSize
+      primary {
+        id
+      }
     }
     allArmies {
       id
@@ -106,6 +119,24 @@ const GET_INITIAL_DATA = gql`
   }
 ` as import("../../../__generated__/ts-gql/getCreateInitialData").type;
 
+const useMissionStuff = () => {
+  const [missionID, setMissionID] = useState<undefined | string>();
+  const [primaryID, setPrimaryID] = useState<undefined | string>();
+
+  const updateMissions = ({
+    value,
+    primaryID,
+  }: {
+    value: string;
+    primaryID: string;
+  }) => {
+    setMissionID(value);
+    setPrimaryID(primaryID);
+  };
+
+  return { missionID, primaryID, updateMissions };
+};
+
 const Create = () => {
   const { data } = useQuery(GET_INITIAL_DATA);
 
@@ -113,7 +144,7 @@ const Create = () => {
   const [army1ID, setArmy1] = useState();
   const [army2ID, setArmy2] = useState();
   const [points, setPoints] = useState(2000);
-  const [missionID, setMissionID] = useState<string | undefined>();
+  const { missionID, primaryID, updateMissions } = useMissionStuff();
   const [description, setDescription] = useState("");
   const { push } = useRouter();
 
@@ -127,9 +158,10 @@ const Create = () => {
         ?.filter(({ forceSize }) => forceSize === missionSize.key, [
           missionSize.key,
         ])
-        .map(({ name, id }) => ({
+        .map(({ name, id, primary }) => ({
           value: id,
           label: name,
+          primaryID: primary.id,
         })),
     [missionSize.key, data?.allMissions]
   );
@@ -190,8 +222,8 @@ const Create = () => {
               <h2>Select Mission</h2>
               <Button
                 onClick={() =>
-                  setMissionID(
-                    missions[Math.floor(Math.random() * missions.length)].value
+                  updateMissions(
+                    missions[Math.floor(Math.random() * missions.length)]
                   )
                 }
               >
@@ -203,7 +235,7 @@ const Create = () => {
               options={missions}
               value={missions.find(({ value }) => value === missionID)}
               onChange={(item, { action }) =>
-                action === "select-option" && setMissionID(item.value)
+                action === "select-option" && updateMissions(item)
               }
             />
           </div>
@@ -239,6 +271,7 @@ const Create = () => {
                     missionID,
                     description,
                     startingCP: missionSize.startingCP,
+                    primaryID,
                   },
                 });
               }}
