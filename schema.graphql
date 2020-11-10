@@ -502,6 +502,7 @@ type Battle {
   setupDescription: String
   description: String
   status: BattleStatusType
+  playDate: String
 }
 
 input BattleWhereInput {
@@ -569,6 +570,14 @@ input BattleWhereInput {
   status_not: BattleStatusType
   status_in: [BattleStatusType]
   status_not_in: [BattleStatusType]
+  playDate: String
+  playDate_not: String
+  playDate_lt: String
+  playDate_lte: String
+  playDate_gt: String
+  playDate_gte: String
+  playDate_in: [String]
+  playDate_not_in: [String]
 }
 
 input BattleWhereUniqueInput {
@@ -592,6 +601,8 @@ enum SortBattlesBy {
   description_DESC
   status_ASC
   status_DESC
+  playDate_ASC
+  playDate_DESC
 }
 
 input BattleUpdateInput {
@@ -602,6 +613,7 @@ input BattleUpdateInput {
   setupDescription: String
   description: String
   status: BattleStatusType
+  playDate: String
 }
 
 input BattlesUpdateInput {
@@ -617,6 +629,7 @@ input BattleCreateInput {
   setupDescription: String
   description: String
   status: BattleStatusType
+  playDate: String
 }
 
 input BattlesCreateInput {

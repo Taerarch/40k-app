@@ -81,9 +81,7 @@ module.exports.Battle = (keystone) => ({
     army1: { type: Relationship, ref: "BattleInfo" },
     army2: { type: Relationship, ref: "BattleInfo" },
     points: { type: Integer },
-    // mission: { type: Relationship, ref: "Mission" },
     mission: { type: Relationship, ref: "Mission" },
-    // primary: { type: Text },
     setupDescription: { type: Markdown },
     description: { type: Markdown },
     status: {
@@ -106,7 +104,11 @@ module.exports.Battle = (keystone) => ({
       }`,
     });
 
-    return `${data.Battle.army1._label_} v ${data.Battle.army2._label_} (${playDate})`;
+    let date = new Date(playDate);
+
+    return `${data.Battle.army1._label_} v ${
+      data.Battle.army2._label_
+    } (${date.toLocaleDateString("en-AU")})`;
   },
 });
 

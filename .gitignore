@@ -8,3 +8,5 @@ dist
 __generated__
 
 *.dump.*
+
+.env

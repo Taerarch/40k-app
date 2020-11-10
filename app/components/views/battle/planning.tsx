@@ -5,6 +5,7 @@ import { gql } from "@ts-gql/tag";
 import Select from "react-select";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { Button } from "../../design-system/Button";
 import { Textarea } from "../../design-system/TextArea";
 import { armyInfoFragment } from "../../../lib/fragments";
@@ -198,6 +199,11 @@ const PlayerPlanning = ({
         NOTE: Before selecting secondaries, you should exchange army lists with
         your opponent
       </i>
+      <div css={{ paddingTop: 8 }}>
+        <Link href={`/battle/${id}/secondary-options`}>
+          <a>View all secondaries rules</a>
+        </Link>
+      </div>
       {army.secondaries.map(({ id, selection }, i) => (
         <PickSecondary
           key={id}
@@ -212,7 +218,7 @@ const PlayerPlanning = ({
         <Textarea
           value={notes}
           onChange={({ target }) => setNotes(target.value)}
-          placeholder="This would be a great place to note down units you have in reserve"
+          placeholder="This would be a great place to note down units you have in reserve, or psychic powers"
         />
       </div>
       <div

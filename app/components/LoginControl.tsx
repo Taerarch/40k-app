@@ -5,6 +5,7 @@ import { gql } from "@ts-gql/tag";
 import { useState } from "react";
 
 import { Input } from "../components/design-system/Input";
+import { Button } from "../components/design-system/Button";
 
 const AUTH_USER = gql`
   mutation signin($email: String, $password: String) {
@@ -43,14 +44,14 @@ const LoggedIn = ({ name }) => {
   return (
     <div>
       <span css={{ paddingRight: 8 }}>{name}</span>
-      <button
+      <Button
         css={{ padding: 4 }}
         onClick={() => {
           logOut().then(() => client.resetStore());
         }}
       >
         Log out
-      </button>
+      </Button>
     </div>
   );
 };

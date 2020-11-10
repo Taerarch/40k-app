@@ -10,13 +10,12 @@ import PostBattle from "../../../components/views/battle/postbattle";
 import SpectatorMode from "../../../components/views/battle/spectator";
 import { BattleInfo } from "../../../lib/fragments";
 
-// TODO refactor this code, and split this file out into more bite-size manageable chunks
-
 const GET_BATTLE = gql`
   query getBattle($id: ID!) {
     Battle(where: { id: $id }) {
       status
       id
+      description
       army1 {
         ...Army_info
       }
@@ -62,6 +61,7 @@ const PlayerView = ({
   id,
   refetch,
   startPolling,
+  description,
 }: PlayerViewProps) => {
   const { myArmy, theirArmy } = sortArmies(army1, army2, userId);
 
@@ -78,7 +78,12 @@ const PlayerView = ({
     startPolling(2000);
 
     return (
-      <PlayerPlaying battleId={id} myArmy={myArmy} theirArmy={theirArmy} />
+      <PlayerPlaying
+        battleId={id}
+        myArmy={myArmy}
+        theirArmy={theirArmy}
+        description={description}
+      />
     );
   } else {
     return (

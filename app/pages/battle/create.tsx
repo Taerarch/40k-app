@@ -40,6 +40,7 @@ const CREATE_BATTLE = gql`
     $army2ID: ID!
     $startingCP: Int!
     $primaryID: ID!
+    $date: String!
   ) {
     createBattle(
       data: {
@@ -47,6 +48,7 @@ const CREATE_BATTLE = gql`
         description: $description
         mission: { connect: { id: $missionID } }
         status: planning
+        playDate: $date
         army1: {
           create: {
             army: { connect: { id: $army1ID } }
@@ -149,6 +151,7 @@ const Create = () => {
   // TODO: make this form accessible instead of these hacks
   const [army1ID, setArmy1] = useState();
   const [army2ID, setArmy2] = useState();
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [points, setPoints] = useState(2000);
   const { missionID, primaryID, updateMissions } = useMissionStuff();
   const [description, setDescription] = useState("");
@@ -246,6 +249,14 @@ const Create = () => {
             />
           </div>
           {missionID && <MissionDisplay id={missionID} />}
+          <div css={{ paddingTop: 8 }}>
+            <label css={{ paddingRight: 8 }}>Select Date</label>
+            <input
+              type="date"
+              value={date}
+              onChange={({ target }) => setDate(target.value)}
+            />
+          </div>
           <div>
             <h2>Describe the scenario (flavor stuff)</h2>
             <Textarea
@@ -278,6 +289,7 @@ const Create = () => {
                     description,
                     startingCP: missionSize.startingCP,
                     primaryID,
+                    date,
                   },
                 });
               }}
