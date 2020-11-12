@@ -20,6 +20,7 @@
   },
   "cacheDirectories": [
     "app/.next/cache",
+    ".dist",
     "__generated__"
   ],
   "dependencies": {

@@ -72,6 +72,7 @@ const AppComponent = ({ Component, pageProps }) => {
           }
         `}
       />
+      {/* @ts-ignore */}
       <ApolloProvider client={apolloClient}>
         <Page>
           <Header />

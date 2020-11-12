@@ -53,7 +53,12 @@ Army
 
 ## Next pages:
 
-- Add a home page with a small amount of info around it all
+- Add a home page with a small amount of info around it all ✅
   - capture permissions errors and bounce people to the home page (currently these are so badly handled)
-- Add a page for a user
-  - See details of armies, create and delete armies
+- ~~Add a page for a user~~
+  - ~~See details of armies, create and delete armies~~
+    this is sort of done by the admin UI - let's not double up quite yet
+- Solidify how pages load, have proper loading states, not jumpy loading
+- Handle errors better - consistently handle 'logged out' errors and views for pages
+- Add battle 'locations' ala Mark's fun idea, so there's more inbuilt personality
+- add ability to add photos so battle narrative can be written out during play
