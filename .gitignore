@@ -10,3 +10,4 @@ __generated__
 *.dump.*
 
 .env
+*.log

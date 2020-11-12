@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { Input } from "../components/design-system/Input";
 import { Button } from "../components/design-system/Button";
+import { AUTHED_USER } from "../lib/queries";
 
 const AUTH_USER = gql`
   mutation signin($email: String, $password: String) {
@@ -20,15 +21,6 @@ const AUTH_USER = gql`
     }
   }
 ` as import("../../__generated__/ts-gql/signin").type;
-
-export const AUTHED_USER = gql`
-  query getAuthedUser1 {
-    authenticatedUser {
-      id
-      name
-    }
-  }
-` as import("../../__generated__/ts-gql/getAuthedUser1").type;
 
 const LOG_OUT = gql`
   mutation unauthUser {
@@ -47,7 +39,9 @@ const LoggedIn = ({ name }) => {
       <Button
         css={{ padding: 4 }}
         onClick={() => {
-          logOut().then(() => client.resetStore());
+          logOut().then(() => {
+            client.resetStore();
+          });
         }}
       >
         Log out
@@ -113,7 +107,7 @@ const UserState = () => {
   const { data } = useQuery(AUTHED_USER);
 
   if (!data) return null;
-  if (data?.authenticatedUser?.name) {
+  if (data.authenticatedUser) {
     return <LoggedIn name={data.authenticatedUser.name} />;
   }
 

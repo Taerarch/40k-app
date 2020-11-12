@@ -61,6 +61,9 @@ module.exports.Army = {
     secondaryColor: { type: Color },
     highlightColor: { type: Color },
   },
+  adminConfig: {
+    defaultColumns: "label,faction,owner,primaryColor,secondaryColor",
+  },
 };
 
 module.exports.Unit = {

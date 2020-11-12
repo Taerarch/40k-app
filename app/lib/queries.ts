@@ -22,3 +22,12 @@ export const GET_AVAILABLE_SECONDARIES = gql`
     }
   }
 ` as import("../../__generated__/ts-gql/getAvailableSecondaries").type;
+
+export const AUTHED_USER = gql`
+  query getAuthedUser {
+    authenticatedUser {
+      id
+      name
+    }
+  }
+` as import("../../__generated__/ts-gql/getAuthedUser").type;

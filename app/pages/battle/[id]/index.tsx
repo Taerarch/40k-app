@@ -9,6 +9,7 @@ import PlayerPlaying from "../../../components/views/battle/playing";
 import PostBattle from "../../../components/views/battle/postbattle";
 import SpectatorMode from "../../../components/views/battle/spectator";
 import { BattleInfo } from "../../../lib/fragments";
+import { AUTHED_USER } from "../../../lib/queries";
 
 const GET_BATTLE = gql`
   query getBattle($id: ID!) {
@@ -25,14 +26,6 @@ const GET_BATTLE = gql`
     }
   }
 ` as import("../../../../__generated__/ts-gql/getBattle").type;
-
-const AUTHED_USER = gql`
-  query getAuthedUser {
-    authenticatedUser {
-      id
-    }
-  }
-` as import("../../../../__generated__/ts-gql/getAuthedUser").type;
 
 type PlayerViewProps = typeof GET_BATTLE.___type.result.Battle & {
   userId: String;

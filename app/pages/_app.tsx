@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { css, Global, jsx } from "@emotion/core";
 import { ApolloProvider } from "@apollo/client";
+import Link from "next/link";
 import { useApollo } from "../lib/apolloClient";
 
 import LoginControl from "../components/LoginControl";
@@ -16,21 +17,40 @@ const Page = (props) => (
   />
 );
 
+const HeaderLink = ({ href, ...rest }) => (
+  <Link href={href}>
+    <a
+      css={{
+        paddingRight: 8,
+        paddingLeft: 8,
+        color: colours.grey200,
+        cursor: "pointer",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: colours.red400,
+        border: `1px solid ${colours.red800}`,
+      }}
+      {...rest}
+    />
+  </Link>
+);
+
 const Header = () => (
   <div
     css={{
       padding: 24,
       backgroundColor: colours.red700,
-      color: colours.neutral200,
+      color: colours.grey200,
     }}
   >
-    <div
-      css={{
-        maxWidth: 640,
-        margin: "auto",
-      }}
-    >
-      <LoginControl />
+    <div css={{ display: "flex" }}>
+      <HeaderLink href="/">Hoem</HeaderLink>
+      <HeaderLink href="/battle">Battels</HeaderLink>
+      <HeaderLink href="/admin">Admine</HeaderLink>
+      <div css={{ marginLeft: "auto" }}>
+        <LoginControl />
+      </div>
     </div>
   </div>
 );
