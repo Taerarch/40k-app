@@ -25,10 +25,10 @@ module.exports.objectToOptions = (obj) =>
   }));
 
 module.exports.missionTypes = {
-  combatPatrol: { label: "Combat Patrol", maxPoints: 500, startingCP: 3 },
-  incursion: { label: "Incursion", maxPoints: 1000, startingCP: 6 },
-  strikeForce: { label: "Strike Force", maxPoints: 2000, startingCP: 12 },
   onslaught: { label: "Onslaught", maxPoints: 3000, startingCP: 15 },
+  strikeForce: { label: "Strike Force", maxPoints: 2000, startingCP: 12 },
+  incursion: { label: "Incursion", maxPoints: 1000, startingCP: 6 },
+  combatPatrol: { label: "Combat Patrol", maxPoints: 500, startingCP: 3 }
 };
 
 module.exports.battleStatuses = {
